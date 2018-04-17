@@ -12,7 +12,8 @@ class View {
 	private Group hook;
 	double Xposition, Yposition, Xsize, Ysize;
 
-	public View(Group hook, double xposition, double yposition, double xsize, double ysize) {
+	public View(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
+		GRAPHIC_IMAGE_LOC = graphicPath;
 		this.hook = hook;
 		image = new Image(GRAPHIC_IMAGE_LOC);
 		imageView = new ImageView(image);
