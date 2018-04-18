@@ -69,10 +69,7 @@ class Controller {
             @Override
             public void handle(long now) {
             	if (!inCombat && !onLadder)
-            	{
             		exploration();
-            		usingLadder();
-            	}
             	if (inCombat)
             		combat();
             	if (onLadder)
@@ -83,26 +80,35 @@ class Controller {
 	}
 	
 	
-
 	private void serviceInteraction() {
 		if (interactionLoot) {
 			int money = environment.pickUpMoney();
 			character.changeMoney(money);
 			ui.updateGold(character.getMoney());
 		}
+		
+		if (interactionUse) {
+			onLadder = true;
+			environment.useLadder();
+			ui.showEkeyUse(false);
+		}
 	}
 	
 	private void exploration() {
-		int dx = 0;
+		int dx = 0, dy = 0;
         if (goEast)  dx += 10;
         if (goWest)  dx -= 10;
-        environment.relocate(dx, 0);
+        if (goNorth) dy -= 10;
+        if (goSouth) dy += 10;
         
-        interactionLoot = environment.checkInteractions(character.getCharacterModel());
-        if (interactionLoot != interactionActive) {
-        	interactionActive = interactionLoot;
-        	ui.showEkeyLoot(interactionLoot);
-        }
+        environment.relocate(dx, dy);
+        
+        interactionLoot = environment.checkInteractionsLoot(character.getCharacterView());
+        interactionUse = environment.checkInteractionsUse(character.getCharacterView());
+        interactionActive = interactionLoot || interactionUse;
+        
+        ui.showEkeyLoot(interactionLoot);
+        ui.showEkeyUse(interactionUse);
 	}
 	
 	private void combat() {
@@ -110,11 +116,11 @@ class Controller {
 	}
 	
 	private void usingLadder() {
-		int dy = 0;
+		double dy = 0;
         if (goNorth) dy -= 10;
         if (goSouth) dy += 10;
         
-        environment.relocate(0, dy);
+        environment.climbOnLadder(dy, character.getCharacterView());
 	}
 	/*
 	public void createLevel() {

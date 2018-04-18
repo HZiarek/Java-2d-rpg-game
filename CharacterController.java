@@ -7,28 +7,26 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
 class CharacterController {
-	private static final String HERO_IMAGE_LOC = "file:graphic/character.png";
+	private static final String HERO_IMAGE_LOC_RIGHT = "file:graphic/character.png";
+	private static final String HERO_IMAGE_LOC_LEFT = "file:graphic/character.png";
+	private static final String HERO_IMAGE_LOC_BACK = "file:graphic/character.png";
     
-    private Group root;
-	private Image characterImage;
-	private ImageView characterView;
+	private CharacterView characterView;
 	private Character characterModel;
 
-	
     public CharacterController(Group hook) {
-    	root = hook;
-    	
-    	characterImage = new Image(HERO_IMAGE_LOC);
-    	characterView = new ImageView (characterImage);
-		root.getChildren().add(characterView);
-		characterView.relocate(900 - (characterView.getBoundsInLocal().getWidth()/2), 350);
-		characterModel = new Character(900 - (characterView.getBoundsInLocal().getWidth()/2), 350,
+    	characterView = new CharacterView (HERO_IMAGE_LOC_RIGHT, hook, 1000, 350);
+		characterView.setVisible(true);
+		characterModel = new Character(900, 350,
 				200, 200, 30, 30, 5, 3, 0);
-
     }
     
     public Character getCharacterModel(){
     	return characterModel;
+    }
+    
+    public CharacterView getCharacterView(){
+    	return characterView;
     }
     
     public void changeMoney(int money) {

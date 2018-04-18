@@ -15,12 +15,14 @@ class EnvironmentController {
 	private Image backgroundImage;
 	private ImageView backgroundView;
 	private ChestController chestNr1, chestNr2, chestNr3;
-	int nrChestInteraction;
+	private LadderController ladderNr1;
+	int nrChestInteraction, nrLadderInteraction;
 
     
     public EnvironmentController(Group hook) {
     	root = hook;
     	nrChestInteraction = 0;
+    	nrLadderInteraction = 0;
     	
     	backgroundImage = new Image(BACKGROUND_IMAGE_LOC);
     	backgroundView = new ImageView (backgroundImage);
@@ -32,25 +34,29 @@ class EnvironmentController {
 		chestNr1 = new ChestController(environment, 500, 750, 300, 300, true, 100);
 		chestNr2 = new ChestController(environment, 1540, 410, 300, 300, true, 100);
 		chestNr3 = new ChestController(environment, 880, 1460, 300, 300, true, 300);
+		ladderNr1 = new LadderController(environment, 3000, 1300, 300, 300, true, 200);
     }
     
     public void relocate(double dx, double dy) {
     	environment.relocate(environment.getLayoutX() - dx, environment.getLayoutY() - dy);
-    	//relocation models
-    	chestNr1.relocateModel(-dx, -dy);
-    	chestNr2.relocateModel(-dx, -dy);
-    	chestNr3.relocateModel(-dx, -dy);
     }
     
-    public boolean checkInteractions(Character heroModel){
-    	if (chestNr1.checkInteraction(heroModel)) {
+    public boolean checkInteractionsLoot(CharacterView heroView){
+    	if (chestNr1.checkInteraction(heroView)) {
     		nrChestInteraction = 1; return true;
     	}
-    	if (chestNr2.checkInteraction(heroModel)) {
+    	if (chestNr2.checkInteraction(heroView)) {
     		nrChestInteraction = 2; return true;
     	}
-    	if (chestNr3.checkInteraction(heroModel)) {
+    	if (chestNr3.checkInteraction(heroView)) {
     		nrChestInteraction = 3; return true;
+    	}
+    	return false;
+    }
+    
+    public boolean checkInteractionsUse(CharacterView heroView){
+    	if (ladderNr1.checkInteraction(heroView)) {
+    		nrLadderInteraction = 1; return true;
     	}
     	return false;
     }
@@ -63,34 +69,45 @@ class EnvironmentController {
 	        default: return 0;
     	}
     }
+    
+    public void useLadder() {
+    	switch (nrLadderInteraction) {
+	        case 1: environment.relocate(- ladderNr1.getXpositionFromModel() + 900, environment.getLayoutY() - 10);//problem przemieszczenie hero
+    	}
+    }
+    
+    public void climbOnLadder(double dy, CharacterView heroView) {
+    	if (dy == 0)
+    		return;
+    	if (ladderNr1.getYposition() <= heroView.getXposition() - dy)
+    			//&& ladderNr1.getYposition() + ladderNr1.getHeight() >= heroView.getXposition() - dy)
+    		 environment.relocate(environment.getLayoutX(), environment.getLayoutY());
+    }
 
 }
 
 class ChestController{
 	private static final String CHEST_IMAGE_LOC = "file:graphic/chest.png";
+	private static final String CHEST_OPEN_IMAGE_LOC = "file:graphic/chestOpen.png";
 	private Chest chestModel;
-	private Image chestImage;
-	private ImageView chestView;
-	private Group environment;
+	private ChestView chestView;
 	
 	public ChestController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			boolean active, int value) {
-		environment = hook;
-		chestModel = new Chest (xposition, yposition - 450, xsize, ysize, active, value);
-		chestImage = new Image(CHEST_IMAGE_LOC);
-		chestView = new ImageView(chestImage);
-		chestView.relocate(xposition, yposition - (chestView.getBoundsInLocal().getHeight()/2));
-		environment.getChildren().add(chestView);
+		chestModel = new Chest(xposition, yposition, xsize, ysize, active, value);
+		chestView = new ChestView (CHEST_IMAGE_LOC, CHEST_OPEN_IMAGE_LOC, hook, xposition, yposition);
+		chestView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (Character heroModel) {
+	public boolean checkInteraction (CharacterView heroView) {
 		if (!chestModel.getActive())
 			return false;
-		return chestModel.intersects(heroModel);
+		return chestView.intersects(heroView);
 	}
 	
 	public int pickUpMoney() {
 		chestModel.setActive(false);
+		chestView.changeImageOnOpen();
 		return chestModel.getValue();
 	}
 
@@ -102,27 +119,39 @@ class ChestController{
 class LadderController{
 	private static final String LADDER_IMAGE_LOC = "file:graphic/ladder.jpg";
 	private Ladder ladderModel;
-	private Image ladderImage;
-	private ImageView ladderView;
-	private Group environment;
+	private LadderView ladderView;
 	
 	public LadderController(Group hook, double xposition, double yposition, double xsize, double ysize,
-			boolean active, int bottomPoint, int topPoint) {
-		environment = hook;
-		ladderModel = new Ladder (xposition, yposition - 450, xsize, ysize, active, bottomPoint, topPoint);
-		ladderImage = new Image(LADDER_IMAGE_LOC);
-		ladderView = new ImageView(ladderImage);
-		ladderView.relocate(xposition, yposition - (ladderView.getBoundsInLocal().getHeight()/2));
-		environment.getChildren().add(ladderView);
+			boolean active, double height) {
+		
+		ladderModel = new Ladder (xposition, yposition - 450, xsize, ysize, active, height);
+		ladderView = new LadderView(LADDER_IMAGE_LOC, hook, xposition, yposition);
+		ladderView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (Character heroModel) {
+	public boolean checkInteraction (CharacterView heroView) {
 		if (!ladderModel.getActive())
 			return false;
-		return ladderModel.intersects(heroModel);
+		return ladderView.intersects(heroView);
 	}
-
-	public void relocateModel(double dx, double dy) {
-		ladderModel.relocate(dx, dy);
+	
+	public double getXpositionFromModel() {
+		return ladderModel.getXposition();
+	}
+	
+	public double getYpositionFromModel() {
+		return ladderModel.getYposition();
+	}
+	
+	public double getXposition() {
+		return ladderView.getXposition();
+	}
+	
+	public double getYposition() {
+		return ladderView.getYposition();
+	}
+	
+	public double getHeight() {
+		return ladderModel.getHeight();
 	}
 }

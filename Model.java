@@ -106,29 +106,19 @@ class Chest extends Item{
 }
 
 class Ladder extends Item{
-	private int bottomPoint;
-	private int topPoint;
+	private double height;
 	
 	public Ladder(double xposition, double yposition, double xsize, double ysize,
-			boolean active, int bottomPoint, int topPoint){
+			boolean active, double height){
 		super (xposition, yposition, xsize, ysize, active);
-		this.bottomPoint = bottomPoint;
-		this.topPoint = topPoint;
+		this.height = height;
 	}
 	
-	public int getBottomPoint() {
-		return bottomPoint;
+	public double getHeight() {
+		return height;
 	}
 	
-	public void setBottomPoint(int newBottomPoint) {
-		bottomPoint = newBottomPoint;
-	}
-	
-	public int getTopPoint() {
-		return topPoint;
-	}
-	
-	public void setTopPoint(int newTopPoint) {
-		topPoint = newTopPoint;
+	public void setHeight(double newHeight) {
+		height = newHeight;
 	}
 }

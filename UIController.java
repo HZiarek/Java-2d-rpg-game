@@ -19,10 +19,15 @@ class UIController {
     private Text goldText, mainTaskText;
     private String goldString, mainTask;
     
+	private boolean interactionActiveUse;
+	private boolean interactionActiveLoot;
+    
 	public UIController(Group hook) {
 		root = hook;
 		ui = new Group();
 		root.getChildren().add(ui);
+		interactionActiveUse = false;
+		interactionActiveLoot = false;;
 		
 		eKeyLootImage = new Image (EKEY_LOOT_IMAGE_LOC);
 		eKeyLootView = new ImageView (eKeyLootImage);
@@ -48,10 +53,23 @@ class UIController {
 	}
 	
 	public void showEkeyLoot(boolean onOrOff){
+		if (onOrOff == interactionActiveLoot)
+			return;
 		if (onOrOff)
 			ui.getChildren().add(eKeyLootView);
 		else
 			ui.getChildren().remove(eKeyLootView);
+		interactionActiveLoot = onOrOff;
+	}
+	
+	public void showEkeyUse(boolean onOrOff){
+		if (onOrOff == interactionActiveUse)
+			return;
+		if (onOrOff)
+			ui.getChildren().add(eKeyUseView);
+		else
+			ui.getChildren().remove(eKeyUseView);
+		interactionActiveUse = onOrOff;
 	}
 	
 	public void updateGold(int gold) {
