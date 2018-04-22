@@ -1,32 +1,32 @@
 package application;
 
+import com.sun.javafx.webkit.UIClientImpl;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 class Controller {
 	private Scene myScene;
 	private Group root;
 	private CharacterController character;
 	private EnvironmentController environment;
+	private OpponentsController opponents;
 	private UIController ui;
+	private int activeSkill;
     
-    boolean goNorth, goSouth, goEast, goWest, interactionLoot, interactionUse,
-    	interactionActive, inCombat, onLadder;
+    boolean goNorth, goSouth, goEast, goWest,
+    	interactionLoot, interactionUse, interactionActive,
+    	inCombat, onLadder,
+    	playerTurn;
 
 	public Controller (Group group, Scene scene) {
 		root = group;
 		environment = new EnvironmentController(root);
+		opponents = new OpponentsController(root);
 		character = new CharacterController(root);
 		ui = new UIController(root);
 		myScene = scene;
@@ -34,6 +34,8 @@ class Controller {
 		interactionUse = false;
 		inCombat = false;
 		interactionActive = false;
+		activeSkill = 1;
+		playerTurn = false;
 	}
 	
 	public void start() {
@@ -48,7 +50,11 @@ class Controller {
 	                case LEFT:  goWest  = true; break;
 	                case RIGHT: goEast  = true; break;
 	                case E:		if (interactionActive) serviceInteraction(); break;
-	                case ENTER:	Platform.exit(); break;
+	                case DIGIT1:	{ui.setHighlight(1); activeSkill = 1;} break;
+	                case DIGIT2:	{ui.setHighlight(2); activeSkill = 2;} break;
+	                case DIGIT3:	{ui.setHighlight(3); activeSkill = 3;} break;
+	                case ENTER:		useSelectedSkill(); break;
+	                case ESCAPE:	Platform.exit(); break;
 	            }
 	        }
 	    });
@@ -89,7 +95,7 @@ class Controller {
 		
 		if (interactionUse) {
 			onLadder = true;
-			environment.useLadder();
+			environment.useLadder(character.getCharacterView());
 			ui.showEkeyUse(false);
 		}
 	}
@@ -101,100 +107,56 @@ class Controller {
         if (goNorth) dy -= 10;
         if (goSouth) dy += 10;
         
-        environment.relocate(dx, dy);
+        character.updateView(dx, false);
+        relocateBackground(dx, 0);
         
         interactionLoot = environment.checkInteractionsLoot(character.getCharacterView());
         interactionUse = environment.checkInteractionsUse(character.getCharacterView());
+        inCombat = opponents.checkInteractions(character.getCharacterView());
         interactionActive = interactionLoot || interactionUse;
         
         ui.showEkeyLoot(interactionLoot);
         ui.showEkeyUse(interactionUse);
+        if (inCombat)
+        	ui.showCombatUI();
 	}
 	
 	private void combat() {
-		
+		if (!opponents.isFight()) {
+			inCombat = false;
+			ui.hideCombatUI();
+		}
+		if (playerTurn)
+			return;
+		playerTurn = opponents.opponentsTurn(character);
+		ui.changeHp(character.getHp());
 	}
 	
 	private void usingLadder() {
-		double dy = 0;
+		int dy = 0;
         if (goNorth) dy -= 10;
         if (goSouth) dy += 10;
         
-        environment.climbOnLadder(dy, character.getCharacterView());
-	}
-	/*
-	public void createLevel() {
-		heroImage = new Image (HERO_IMAGE_LOC);
-		hero = new ImageView (heroImage);
-		
-		back.relocate(0, -300);
-		chestImage = new Image (CHEST_IMAGE_LOC);
-		chest = new ImageView (chestImage);
-		eKeyImage = new Image (EKEY_IMAGE_LOC);
-		eKey = new ImageView (eKeyImage);
-		eKey.relocate(1000, 300);
-		
-		environment = new Group();
-		environment.getChildren().add(chest);
-		root.getChildren().add(environment);
-		root.getChildren().add(hero);
-		hero.relocate(900 - (hero.getBoundsInLocal().getWidth()/2), 500 - (hero.getBoundsInLocal().getHeight()/2));
-		
-		back.setLayoutY(-160);
-		
-		//modele
-		chest1 = new Chest(300, 500, 100, 100, true, 200);
-		character = new Character(900 - (hero.getBoundsInLocal().getWidth()/2), 500, 100, 100, 30, 30, 5, 3, 0);
-		
-		//napis - ilosc zlota
-		pointsText = "Cash: $ " + character.getMoney();
-		gold = new Text(pointsText);
-		gold.setFont(new Font(50));
-		root.getChildren().add(gold);
-		gold.relocate(50, 50);
-		
-		//tymczasowy obrazek drabiny
-		ladderImage = new Image ("file:graphic/ladder.jpg");
-		ladderView = new ImageView (ladderImage);
-		environment.getChildren().add(ladderView);
-		ladderView.relocate(1000, 500);
-		
-		//drabina
-		ladder = new Item(1000, 500, 200, 200, true);
-		
-		//niedziwiedz
-		bear = new Bear (900 - (hero.getBoundsInLocal().getWidth()/2), 500, 100, 100, 30, 30, 5, 3, 0);
+        onLadder = environment.climbAndCheckIsStillOnLadder(dy, character.getCharacterView());
 	}
 	
+	private void relocateBackground (double dx, double dy) {
+		if (dx == 0 && dy == 0)
+			return;
+		environment.relocate(dx, dy);
+		opponents.relocate(dx, dy);
+	}
 	
-	private void bearAttack () {
-		if (!character.getDefenseIsActive())
-			character.changeHp(-bear.getDamage());
-		else {
-			character.setDefenseIsActive(false);
-			int tmpDamage = bear.getDamage()-character.getDefense();
-			if (tmpDamage > 0)
-				character.changeHp(-tmpDamage);
+	private void useSelectedSkill() {
+		if (!inCombat || !playerTurn)
+			return;
+		switch(activeSkill) {
+			case 1: opponents.attacked(-10); break;
+			case 2: {character.healMax(); ui.changeHp(character.getHp());} break;
+			case 3: character.defense(); break;
+			default: Platform.exit();
 		}
+		
+		playerTurn = false;
 	}
-	
-	private void characterHealing() {
-		character.setHp(character.getMaxHp());
-	}
-	
-	private void characterDefense() {
-		character.setDefenseIsActive(true);
-	}
-
-	private void characterAttack () {
-		if (!bear.getDefenseIsActive())
-			bear.changeHp(-character.getDamage());
-		else {
-			bear.setDefenseIsActive(false);
-			int tmpDamage = character.getDamage()-bear.getDefense();
-			if (tmpDamage > 0)
-				bear.changeHp(-tmpDamage);
-		}
-	}
-*/	
 }

@@ -1,15 +1,11 @@
 package application;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 class EnvironmentController {
-    private static final String BACKGROUND_IMAGE_LOC = "file:graphic/back.jpg";
-    
     private Group root, environment;
     private Pane backgroundLayer;
 	private Image backgroundImage;
@@ -23,18 +19,19 @@ class EnvironmentController {
     	root = hook;
     	nrChestInteraction = 0;
     	nrLadderInteraction = 0;
+    	GraphicPaths paths = new GraphicPaths();
     	
-    	backgroundImage = new Image(BACKGROUND_IMAGE_LOC);
+    	backgroundImage = new Image(paths.getPath("background"));
     	backgroundView = new ImageView (backgroundImage);
     	backgroundLayer = new Pane();
 		backgroundLayer.getChildren().add(backgroundView);
 		environment = new Group (backgroundLayer);
 		root.getChildren().add(environment);
 		environment.relocate(0, -150);
-		chestNr1 = new ChestController(environment, 500, 750, 300, 300, true, 100);
-		chestNr2 = new ChestController(environment, 1540, 410, 300, 300, true, 100);
-		chestNr3 = new ChestController(environment, 880, 1460, 300, 300, true, 300);
-		ladderNr1 = new LadderController(environment, 3000, 1300, 300, 300, true, 200);
+		chestNr1 = new ChestController(environment, 580, 775, 300, 300, true, 1, 100);
+		chestNr2 = new ChestController(environment, 1610, 460, 300, 300, true, 1, 100);
+		chestNr3 = new ChestController(environment, 975, 1520, 300, 300, true, 1, 300);
+		ladderNr1 = new LadderController(environment, 1000, 1150, 300, 300, true, 400, 1);
     }
     
     public void relocate(double dx, double dy) {
@@ -70,32 +67,44 @@ class EnvironmentController {
     	}
     }
     
-    public void useLadder() {
+    public void useLadder(CharacterView heroView) {
     	switch (nrLadderInteraction) {
-	        case 1: environment.relocate(- ladderNr1.getXpositionFromModel() + 900, environment.getLayoutY() - 10);//problem przemieszczenie hero
+	        case 1: relocate(ladderNr1.getXposition() - heroView.getXposition(), -11);//problem przemieszczenie hero
     	}
     }
     
-    public void climbOnLadder(double dy, CharacterView heroView) {
+    public boolean climbAndCheckIsStillOnLadder(double dy, CharacterView heroView) {
     	if (dy == 0)
-    		return;
-    	if (ladderNr1.getYposition() <= heroView.getXposition() - dy)
-    			//&& ladderNr1.getYposition() + ladderNr1.getHeight() >= heroView.getXposition() - dy)
-    		 environment.relocate(environment.getLayoutX(), environment.getLayoutY());
+    		return true;
+    	
+    	if (ladderNr1.getYposition() + dy - heroView.getYposition() <= 0) {
+    		relocate(0, ladderNr1.getYposition() - heroView.getYposition());
+    		return false;
+    	}
+    	
+    	if (heroView.getYposition() - ladderNr1.getYposition() + ladderNr1.getHeight() < 0) {
+    		relocate(0, dy);
+    		return false;
+    	}
+    	
+    	relocate(0, dy);
+    	return true;
     }
 
 }
 
 class ChestController{
-	private static final String CHEST_IMAGE_LOC = "file:graphic/chest.png";
-	private static final String CHEST_OPEN_IMAGE_LOC = "file:graphic/chestOpen.png";
 	private Chest chestModel;
 	private ChestView chestView;
 	
 	public ChestController(Group hook, double xposition, double yposition, double xsize, double ysize,
-			boolean active, int value) {
-		chestModel = new Chest(xposition, yposition, xsize, ysize, active, value);
-		chestView = new ChestView (CHEST_IMAGE_LOC, CHEST_OPEN_IMAGE_LOC, hook, xposition, yposition);
+			boolean active, int type, int value) {
+		chestModel = new Chest(xposition, yposition, xsize, ysize, active, type, value);
+		GraphicPaths paths = new GraphicPaths();
+		switch (type) {
+			case 1: chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), hook, xposition, yposition);
+			default:  chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), hook, xposition, yposition);
+		}
 		chestView.setVisible(true);
 	}
 	
@@ -117,15 +126,19 @@ class ChestController{
 }
 
 class LadderController{
-	private static final String LADDER_IMAGE_LOC = "file:graphic/ladder.jpg";
 	private Ladder ladderModel;
 	private LadderView ladderView;
 	
 	public LadderController(Group hook, double xposition, double yposition, double xsize, double ysize,
-			boolean active, double height) {
+			boolean active, double height, int type) {
 		
-		ladderModel = new Ladder (xposition, yposition - 450, xsize, ysize, active, height);
-		ladderView = new LadderView(LADDER_IMAGE_LOC, hook, xposition, yposition);
+		ladderModel = new Ladder (xposition, yposition, xsize, ysize, active, height, type);
+		
+		GraphicPaths paths = new GraphicPaths();
+		switch (type) {
+			case 1: ladderView = new LadderView(paths.getPath("ladder"), hook, xposition, yposition); break;
+			default:  ladderView = new LadderView(paths.getPath("ladder"), hook, xposition, yposition);
+		}
 		ladderView.setVisible(true);
 	}
 	

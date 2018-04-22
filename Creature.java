@@ -1,6 +1,7 @@
 package application;
 
 class Creature extends Model {
+	private boolean alive;
 	private int hp;
 	private int maxHp;
 	private int damage;
@@ -11,10 +12,21 @@ class Creature extends Model {
 			int hp, int maxHp, int dmg, int def){
 		super (xposition, yposition, xsize, ysize);
 		this.hp = hp;
+		if (maxHp < hp)
+			this.maxHp = hp;
 		this.maxHp = maxHp;
 		damage = dmg;
 		defense = def;
 		defenseIsActive = false;
+		alive = true;
+	}
+	
+	public boolean getAlive() {
+		return alive;
+	}
+	
+	public void setAlive(boolean alive) {
+		this.alive = alive;
 	}
 	
 	public int getHp() {
@@ -34,12 +46,21 @@ class Creature extends Model {
 	public void setMaxHp(int maxHp) {
 		this.maxHp = maxHp;
 	}
-		
-	public void changeHp (int howManyPoints) {
+	
+	//return true if the creature is still alive
+	public boolean changeHpAndCheckIsDead (int howManyPoints) {
 		int tmpHp = hp + howManyPoints;
-		if (tmpHp > maxHp || tmpHp < 0)
-			return;
-		hp = tmpHp;
+		if (tmpHp <= 0) {
+			alive = false;
+			hp = 0;
+			return false;
+		}
+		if (tmpHp > maxHp)
+			hp = maxHp;
+		else
+			hp = tmpHp;
+		
+		return true;
 	}
 	
 	public int getDamage() {

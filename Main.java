@@ -7,6 +7,9 @@ import javafx.scene.Scene;
 
 import javafx.scene.paint.Color;
 
+/*
+ * Graphic paths in every main controller (ui, environment, character, opponents)
+ */
 
 public class Main extends Application {
 	

@@ -9,9 +9,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 class UIController {
-	private static final String EKEY_LOOT_IMAGE_LOC = "file:graphic/e-key.png";
-	private static final String EKEY_USE_IMAGE_LOC = "file:graphic/e-key-use.png";
-	
 	private Group root, ui;
 	private Image eKeyLootImage, eKeyUseImage;
 	private ImageView eKeyLootView, eKeyUseView;
@@ -21,21 +18,28 @@ class UIController {
     
 	private boolean interactionActiveUse;
 	private boolean interactionActiveLoot;
+	
+	private SkillView skillNr1, skillNr2, skillNr3;
+	
+	private HpController hp;
+
     
 	public UIController(Group hook) {
 		root = hook;
 		ui = new Group();
 		root.getChildren().add(ui);
 		interactionActiveUse = false;
-		interactionActiveLoot = false;;
+		interactionActiveLoot = false;
 		
-		eKeyLootImage = new Image (EKEY_LOOT_IMAGE_LOC);
+		GraphicPaths paths = new GraphicPaths();
+		
+		eKeyLootImage = new Image (paths.getPath("eKeyLoot"));
 		eKeyLootView = new ImageView (eKeyLootImage);
-		eKeyLootView.relocate(1650, 850);
+		eKeyLootView.relocate(1580, 850);
 
-		eKeyUseImage = new Image (EKEY_USE_IMAGE_LOC);
+		eKeyUseImage = new Image (paths.getPath("eKeyUse"));
 		eKeyUseView = new ImageView (eKeyUseImage);
-		eKeyUseView.relocate(1650, 850);
+		eKeyUseView.relocate(1580, 850);
 		
 		goldString = "Gold " + 0;
 		goldText = new Text(goldString);
@@ -50,6 +54,15 @@ class UIController {
 		mainTaskText.setFill(Color.BISQUE);
 		ui.getChildren().add(mainTaskText);
 		mainTaskText.relocate(10, 880);
+		
+		skillNr1 = new SkillView (paths.getPath("skillAttack"), paths.getPath("skillHightlight"),
+				root, 900, 900);
+		skillNr2 = new SkillView (paths.getPath("skillDefense"), paths.getPath("skillHightlight"),
+				root, 1050, 900);
+		skillNr3 = new SkillView (paths.getPath("skillHeal"), paths.getPath("skillHightlight"),
+				root, 1200, 900);
+		
+		hp = new HpController (hook);
 	}
 	
 	public void showEkeyLoot(boolean onOrOff){
@@ -76,5 +89,72 @@ class UIController {
 		goldString = "Gold: " + gold;
 		goldText.setText(goldString);
 	}
+	
+	public void tmpFight() {
+		mainTask = "FIGHT!";
+		mainTaskText.setText(mainTask);
+	}
+	
+	public void showCombatUI() {
+		skillNr1.setVisible(true);
+		skillNr2.setVisible(true);
+		skillNr3.setVisible(true);
+		skillNr1.setHighlight(true);
+	}
+	
+	public void hideCombatUI() {
+		skillNr1.setVisible(false);
+		skillNr2.setVisible(false);
+		skillNr3.setVisible(false);
+	}
+	
+	public void setHighlight(int whichOne) {
+		switch (whichOne) {
+			case 1: {skillNr1.setHighlight(true); skillNr2.setHighlight(false); skillNr3.setHighlight(false);} break;
+			case 2: {skillNr1.setHighlight(false); skillNr2.setHighlight(true); skillNr3.setHighlight(false);} break;
+			case 3: {skillNr1.setHighlight(false); skillNr2.setHighlight(false); skillNr3.setHighlight(true);} break;
+			default: {skillNr1.setHighlight(true); skillNr2.setHighlight(false); skillNr3.setHighlight(false);}
+		}
+		
+	}
+	
+	public void changeHp(int newHp) {
+		hp.changeHp(newHp);
+	}
+}
 
+class HpController{
+	private View hp[];
+	private Group hpGroup;
+	private int currentHp;
+	
+	public HpController (Group hook) {
+		hpGroup = new Group();
+		hook.getChildren().add(hpGroup);
+		GraphicPaths paths = new GraphicPaths();
+		currentHp = 49;
+		
+		hp = new View[50];
+		int tmpCounter = 0;
+
+		for (int i = 0; i < 50; i++) {
+			hp[i] = new View(paths.getPath("pieceOfHp"), hpGroup, 50 + tmpCounter, 60);
+			tmpCounter += 10;
+			hp[i].setVisible(true);
+		}
+		
+	}
+
+	public void changeHp(int newHp) {
+		newHp -= 1;
+		if (newHp == currentHp)
+			return;
+		if (newHp > currentHp)
+			for (int i = currentHp; i <= newHp; i++)
+				hp[i].setVisible(true);
+		else
+			for (int i = currentHp; i >= newHp; i--)
+				hp[i].setVisible(false);
+		currentHp = newHp;
+	}
 }

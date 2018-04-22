@@ -89,11 +89,13 @@ class Item extends Model {
 
 class Chest extends Item{
 	private int value;
+	private int type;
 	
 	public Chest(double xposition, double yposition, double xsize, double ysize,
-			boolean active, int value){
+			boolean active, int type, int value){
 		super (xposition, yposition, xsize, ysize, active);
 		this.value = value;
+		this.type = type;
 	}
 	
 	public int getValue() {
@@ -107,11 +109,13 @@ class Chest extends Item{
 
 class Ladder extends Item{
 	private double height;
+	private int type;
 	
 	public Ladder(double xposition, double yposition, double xsize, double ysize,
-			boolean active, double height){
+			boolean active, double height, int type){
 		super (xposition, yposition, xsize, ysize, active);
 		this.height = height;
+		this.type = type;
 	}
 	
 	public double getHeight() {
