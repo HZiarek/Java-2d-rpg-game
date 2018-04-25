@@ -16,7 +16,7 @@ class SkillView extends View{
 		highlightImage = new Image(graphicPathHighlight);
 		highlightView = new ImageView(highlightImage);
 		highlightView.relocate(xposition - (highlightView.getBoundsInLocal().getWidth()/2),
-				yposition - (highlightView.getBoundsInLocal().getHeight()));
+				yposition - (highlightView.getBoundsInLocal().getHeight()) + 20); //na sztywno zaszyty highlight
 		isHighlight = false;
 	}
 	
@@ -25,7 +25,7 @@ class SkillView extends View{
 		highlightImage = new Image(graphicPathHighlight);
 		highlightView = new ImageView(highlightImage);
 		highlightView.relocate(xposition - (highlightView.getBoundsInLocal().getWidth()/2),
-				yposition - (highlightView.getBoundsInLocal().getHeight()));
+				yposition - (highlightView.getBoundsInLocal().getHeight()) + 20);//na sztywno zaszyty highlight
 		isHighlight = false;
 	}
 	

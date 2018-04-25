@@ -52,5 +52,9 @@ class CharacterController {
 	public int getHp() {
 		return characterModel.getHp();
 	}
+	
+	public void relocate(double dx, double dy) {
+		characterView.relocate(dx, dy);
+	}
 
 }

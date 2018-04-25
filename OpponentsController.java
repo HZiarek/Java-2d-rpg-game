@@ -19,7 +19,7 @@ class OpponentsController {
     	nrOpponentInteraction = 0;
     	numberOfOpponentsInFight = 0;
     	pseudoTimeCounter = 0;
-		bear = new BearController(opponents, 1650, 1360, 300, 300, 100, 15, 5, 10);
+		bear = new BearController(opponents, 1650, 1360, 500, 300, 100, 15, 5, 10);
     }
 	
     public void relocate(double dx, double dy) {

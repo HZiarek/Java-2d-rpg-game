@@ -11,8 +11,11 @@ class EnvironmentController {
 	private Image backgroundImage;
 	private ImageView backgroundView;
 	private ChestController chestNr1, chestNr2, chestNr3;
-	private LadderController ladderNr1;
+	private LadderController ladderNr1, ladderNr2;
 	int nrChestInteraction, nrLadderInteraction;
+	
+	//testowanie granic mapy
+	private BoundaryController boudaries;
 
     
     public EnvironmentController(Group hook) {
@@ -31,11 +34,22 @@ class EnvironmentController {
 		chestNr1 = new ChestController(environment, 580, 775, 300, 300, true, 1, 100);
 		chestNr2 = new ChestController(environment, 1610, 460, 300, 300, true, 1, 100);
 		chestNr3 = new ChestController(environment, 975, 1520, 300, 300, true, 1, 300);
-		ladderNr1 = new LadderController(environment, 1000, 1150, 300, 300, true, 400, 1);
+		ladderNr1 = new LadderController(environment, 3050, 1515, 300, 300, true, 715, 1);
+		ladderNr2 = new LadderController(environment, 1200, 800, 300, 300, true, 330, 2);
+		
+		boudaries = new BoundaryController(environment);
     }
     
-    public void relocate(double dx, double dy) {
-    	environment.relocate(environment.getLayoutX() - dx, environment.getLayoutY() - dy);
+    public boolean checkCanMoveAndRelocate(double dx, double dy, CharacterView heroView) {
+    	if (!boudaries.checkCanMove(heroView) || dy != 0) {
+    		environment.relocate(environment.getLayoutX() - dx, environment.getLayoutY() - dy);
+    		return false;
+    	}
+    	return true;
+    }
+    
+    public boolean checkMustStop(double dx, double dy, CharacterView heroView) {
+    	return boudaries.checkMustStop(dx, dy, heroView);
     }
     
     public boolean checkInteractionsLoot(CharacterView heroView){
@@ -69,7 +83,7 @@ class EnvironmentController {
     
     public void useLadder(CharacterView heroView) {
     	switch (nrLadderInteraction) {
-	        case 1: relocate(ladderNr1.getXposition() - heroView.getXposition(), -11);//problem przemieszczenie hero
+	        case 1: checkCanMoveAndRelocate(ladderNr1.getXposition() - heroView.getXposition(), 0, heroView);//problem przemieszczenie hero
     	}
     }
     
@@ -77,17 +91,17 @@ class EnvironmentController {
     	if (dy == 0)
     		return true;
     	
-    	if (ladderNr1.getYposition() + dy - heroView.getYposition() <= 0) {
-    		relocate(0, ladderNr1.getYposition() - heroView.getYposition());
+    	if (ladderNr1.getYposition() + dy - heroView.getYposition() < 0 && dy > 0) {
+    		checkCanMoveAndRelocate(0, ladderNr1.getYposition() - heroView.getYposition(), heroView);
     		return false;
     	}
     	
-    	if (heroView.getYposition() - ladderNr1.getYposition() + ladderNr1.getHeight() < 0) {
-    		relocate(0, dy);
+    	if (heroView.getYposition() - ladderNr1.getYposition() + ladderNr1.getHeight() < 0 && dy < 0) {
+    		checkCanMoveAndRelocate(0, ladderNr1.getYposition() - heroView.getYposition() - ladderNr1.getHeight(), heroView);
     		return false;
     	}
     	
-    	relocate(0, dy);
+    	checkCanMoveAndRelocate(0, dy, heroView);
     	return true;
     }
 
@@ -136,7 +150,8 @@ class LadderController{
 		
 		GraphicPaths paths = new GraphicPaths();
 		switch (type) {
-			case 1: ladderView = new LadderView(paths.getPath("ladder"), hook, xposition, yposition); break;
+			case 1: ladderView = new LadderView(paths.getPath("ladderLong"), hook, xposition, yposition); break;
+			case 2: ladderView = new LadderView(paths.getPath("ladderShort"), hook, xposition, yposition); break;
 			default:  ladderView = new LadderView(paths.getPath("ladder"), hook, xposition, yposition);
 		}
 		ladderView.setVisible(true);
@@ -166,5 +181,35 @@ class LadderController{
 	
 	public double getHeight() {
 		return ladderModel.getHeight();
+	}
+}
+
+
+//testowanie granic mapy
+class BoundaryController{
+	private View leftTopMove, rightTopMove,
+					leftTopStop, rightTopStop;
+	
+	public BoundaryController(Group hook) {
+		GraphicPaths paths = new GraphicPaths();
+		leftTopMove = new View(paths.getPath("boundaryMove"), hook, 450, 1000);
+		leftTopMove.setVisible(true);
+		leftTopStop = new View(paths.getPath("boundaryStop"), hook, 40, 1000);
+		leftTopStop.setVisible(true);
+		
+		
+		rightTopMove = new View(paths.getPath("boundaryMove"), hook, 3000, 1000);
+		rightTopMove.setVisible(true);
+		rightTopStop = new View(paths.getPath("boundaryStop"), hook, 3200, 1000);
+		rightTopStop.setVisible(true);
+	}
+	
+	public boolean checkCanMove (CharacterView heroView) {
+		return (leftTopMove.intersects(heroView) || rightTopMove.intersects(heroView));
+	}
+	
+	public boolean checkMustStop (double dx, double dy, CharacterView heroView) {
+		return ((leftTopStop.intersects(heroView) && dx < 0)
+				|| (rightTopStop.intersects(heroView) && dx > 0));
 	}
 }

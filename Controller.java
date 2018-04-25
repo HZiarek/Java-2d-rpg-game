@@ -18,10 +18,10 @@ class Controller {
 	private UIController ui;
 	private int activeSkill;
     
-    boolean goNorth, goSouth, goEast, goWest,
+    boolean goUp, goDown, goRight, goLeft,
     	interactionLoot, interactionUse, interactionActive,
     	inCombat, onLadder,
-    	playerTurn;
+    	isPlayerTurn;
 
 	public Controller (Group group, Scene scene) {
 		root = group;
@@ -35,7 +35,7 @@ class Controller {
 		inCombat = false;
 		interactionActive = false;
 		activeSkill = 1;
-		playerTurn = false;
+		isPlayerTurn = false;
 	}
 	
 	public void start() {
@@ -45,10 +45,10 @@ class Controller {
 	        @Override
 	        public void handle(KeyEvent event) {
 	            switch (event.getCode()) {
-	                case UP:    goNorth = true; break;
-	                case DOWN:  goSouth = true; break;
-	                case LEFT:  goWest  = true; break;
-	                case RIGHT: goEast  = true; break;
+	                case UP:    goUp = true; break;
+	                case DOWN:  goDown = true; break;
+	                case LEFT:  goLeft  = true; break;
+	                case RIGHT: goRight  = true; break;
 	                case E:		if (interactionActive) serviceInteraction(); break;
 	                case DIGIT1:	{ui.setHighlight(1); activeSkill = 1;} break;
 	                case DIGIT2:	{ui.setHighlight(2); activeSkill = 2;} break;
@@ -63,10 +63,10 @@ class Controller {
 	        @Override
 	        public void handle(KeyEvent event) {
 	            switch (event.getCode()) {
-	                case UP:    goNorth = false; break;
-	                case DOWN:  goSouth = false; break;
-	                case LEFT:  goWest  = false; break;
-	                case RIGHT: goEast  = false; break;
+	                case UP:    goUp = false; break;
+	                case DOWN:  goDown = false; break;
+	                case LEFT:  goLeft  = false; break;
+	                case RIGHT: goRight  = false; break;
 	            }
 	        }
 	    });
@@ -96,19 +96,20 @@ class Controller {
 		if (interactionUse) {
 			onLadder = true;
 			environment.useLadder(character.getCharacterView());
+			character.updateView(0, true);
 			ui.showEkeyUse(false);
 		}
 	}
 	
 	private void exploration() {
 		int dx = 0, dy = 0;
-        if (goEast)  dx += 10;
-        if (goWest)  dx -= 10;
-        if (goNorth) dy -= 10;
-        if (goSouth) dy += 10;
+        if (goRight)  dx += 10;
+        if (goLeft)  dx -= 10;
+        if (goUp) dy -= 10;
+        if (goDown) dy += 10;
         
         character.updateView(dx, false);
-        relocateBackground(dx, 0);
+        moveCharacter(dx, dy);
         
         interactionLoot = environment.checkInteractionsLoot(character.getCharacterView());
         interactionUse = environment.checkInteractionsUse(character.getCharacterView());
@@ -126,29 +127,34 @@ class Controller {
 			inCombat = false;
 			ui.hideCombatUI();
 		}
-		if (playerTurn)
+		if (isPlayerTurn)
 			return;
-		playerTurn = opponents.opponentsTurn(character);
+		isPlayerTurn = opponents.opponentsTurn(character);
 		ui.changeHp(character.getHp());
 	}
 	
 	private void usingLadder() {
 		int dy = 0;
-        if (goNorth) dy -= 10;
-        if (goSouth) dy += 10;
+        if (goUp) dy -= 10;
+        if (goDown) dy += 10;
         
         onLadder = environment.climbAndCheckIsStillOnLadder(dy, character.getCharacterView());
+        if (!onLadder)
+        	character.updateView(10, false);
 	}
 	
-	private void relocateBackground (double dx, double dy) {
+	private void moveCharacter (double dx, double dy) {
 		if (dx == 0 && dy == 0)
 			return;
-		environment.relocate(dx, dy);
-		opponents.relocate(dx, dy);
+		if (!environment.checkCanMoveAndRelocate(dx, dy, character.getCharacterView()))
+			opponents.relocate(dx, dy);
+		else
+			if (!environment.checkMustStop(dx, dy, character.getCharacterView()))
+				character.relocate(dx, dy);
 	}
 	
 	private void useSelectedSkill() {
-		if (!inCombat || !playerTurn)
+		if (!inCombat || !isPlayerTurn)
 			return;
 		switch(activeSkill) {
 			case 1: opponents.attacked(-10); break;
@@ -157,6 +163,6 @@ class Controller {
 			default: Platform.exit();
 		}
 		
-		playerTurn = false;
+		isPlayerTurn = false;
 	}
 }

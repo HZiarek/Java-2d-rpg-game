@@ -56,10 +56,10 @@ class UIController {
 		mainTaskText.relocate(10, 880);
 		
 		skillNr1 = new SkillView (paths.getPath("skillAttack"), paths.getPath("skillHightlight"),
-				root, 900, 900);
-		skillNr2 = new SkillView (paths.getPath("skillDefense"), paths.getPath("skillHightlight"),
-				root, 1050, 900);
-		skillNr3 = new SkillView (paths.getPath("skillHeal"), paths.getPath("skillHightlight"),
+				root, 800, 900);
+		skillNr2 = new SkillView (paths.getPath("skillHeal"), paths.getPath("skillHightlight"),
+				root, 1000, 900);
+		skillNr3 = new SkillView (paths.getPath("skillDefense"), paths.getPath("skillHightlight"),
 				root, 1200, 900);
 		
 		hp = new HpController (hook);
@@ -124,7 +124,7 @@ class UIController {
 }
 
 class HpController{
-	private View hp[];
+	private View hp[], stripeView;
 	private Group hpGroup;
 	private int currentHp;
 	
@@ -133,6 +133,9 @@ class HpController{
 		hook.getChildren().add(hpGroup);
 		GraphicPaths paths = new GraphicPaths();
 		currentHp = 49;
+		
+		stripeView = new View (paths.getPath("hpStripe"), hpGroup, 295, 65);
+		stripeView.setVisible(true);
 		
 		hp = new View[50];
 		int tmpCounter = 0;
