@@ -89,7 +89,7 @@ class ChestView extends View{
 	}
 }
 
-class CreatureView extends View{
+class FourPerspectiveView extends View{
 	private Image imageFront;
 	private Image imageLeft;
 	private Image imageBack;
@@ -100,7 +100,7 @@ class CreatureView extends View{
 	} 
 	perspective viewDirection;
 	
-	public CreatureView(String graphicPathFloor, String graphicPathFront, String graphicPathRight, String graphicPathLeft, String graphicPathBack,
+	public FourPerspectiveView(String graphicPathFloor, String graphicPathFront, String graphicPathRight, String graphicPathLeft, String graphicPathBack,
 			Group hook, double xposition, double yposition, double xsize, double ysize) {
 		
 		super (graphicPathFloor, hook, xposition, yposition, xsize, ysize);
@@ -111,11 +111,10 @@ class CreatureView extends View{
 		perspectiveView = new ImageView(imageFront);
 		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
 				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
-		hook.getChildren().add(perspectiveView);
 		viewDirection = perspective.FRONT;
 	}
 	
-	public CreatureView(String graphicPathFloor, String graphicPathFront,String graphicPathRight, String graphicPathLeft, String graphicPathBack,
+	public FourPerspectiveView(String graphicPathFloor, String graphicPathFront,String graphicPathRight, String graphicPathLeft, String graphicPathBack,
 			Group hook, double xposition, double yposition) {
 		super (graphicPathFloor, hook, xposition, yposition);
 		imageLeft = new Image(graphicPathLeft);
@@ -125,7 +124,6 @@ class CreatureView extends View{
 		perspectiveView = new ImageView(imageFront);
 		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
 				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
-		hook.getChildren().add(perspectiveView);
 		viewDirection = perspective.FRONT;
 	}
 	
@@ -142,6 +140,8 @@ class CreatureView extends View{
 	}
 	
 	public void updateView(double dx, double dy) {
+		
+		
 		if (dy>0) {
 			if (viewDirection == perspective.FRONT)
 				return;
@@ -173,6 +173,17 @@ class CreatureView extends View{
 				perspectiveView.setImage(imageLeft);
 				viewDirection = perspective.LEFT;
 			}
+		}
+	}
+	
+	public void setVisible(boolean onOrOff) {
+		if (onOrOff) {
+			//hook.getChildren().add(imageView);
+			hook.getChildren().add(perspectiveView);
+		}
+		else {
+			//hook.getChildren().remove(imageView);
+			hook.getChildren().remove(perspectiveView);
 		}
 	}
 }

@@ -148,9 +148,9 @@ class GameplayController {
 	private void exploration() {
 		int dx = 0, dy = 0;
         if (goRight)  dx += 12;
-        if (goLeft)  dx -= 12;
-        if (goUp) dy -= 12;
-        if (goDown) dy += 12;
+        else if (goLeft)  dx -= 12;
+        else if (goUp) dy -= 12;
+        else if (goDown) dy += 12;
         
         moveCharacter(dx, dy);
         
@@ -169,6 +169,7 @@ class GameplayController {
 		if (!opponents.isFight()) {
 			inCombat = false;
 			ui.hideCombatUI();
+			moveCharacter(0, -1);
 		}
 		if (isPlayerTurn)
 			return;
@@ -182,11 +183,14 @@ class GameplayController {
 		
         character.updateView(dx, dy);
  
-		//environment.getNextMaxStepCharacterRelocateX(dx, character.getCharacterView());
+		character.relocate(dx, dy);
+		if (environment.checkCanMove(character.getCharacterView())) {
+			opponents.relocate(dx, dy);
+			environment.relocate(dx, dy);
+		}
 		
-        opponents.relocate(dx, dy);
-		environment.relocate(dx, dy);
-
+		character.relocate(-dx, -dy);
+     
 	}
 	
 	private void useSelectedSkill() {

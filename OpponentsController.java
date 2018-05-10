@@ -19,7 +19,7 @@ class OpponentsController {
     	nrOpponentInteraction = 0;
     	numberOfOpponentsInFight = 0;
     	pseudoTimeCounter = 0;
-		bear = new BanditController(opponents, 1200, 100, 200, 200, 15, 15, 10, 1);//x, y, xsize ysize hp maxHp dmg def
+		bear = new BanditController(opponents, 70, -200, 200, 200, 15, 15, 10, 1);//x, y, xsize ysize hp maxHp dmg def
     }
 	
     public void relocate(double dx, double dy) {
@@ -28,7 +28,7 @@ class OpponentsController {
     	opponents.setLayoutY(opponents.getLayoutY() - dy);
     }
     
-    public boolean checkInteractions(CreatureView heroView){
+    public boolean checkInteractions(FourPerspectiveView heroView){
     	if (bear.checkInteraction(heroView)) {
     		nrOpponentInteraction = 1;
     		numberOfOpponentsInFight++;
@@ -67,12 +67,12 @@ class OpponentsController {
 
 class BanditController{
 	private Bandit banditModel;
-	private CreatureView banditView;
+	private FourPerspectiveView banditView;
 	
 	public BanditController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def) {
 		GraphicPaths paths = new GraphicPaths();
-		banditView = new CreatureView (paths.getPath("banditFloor"),
+		banditView = new FourPerspectiveView (paths.getPath("banditFloor"),
     			paths.getPath("banditFront"),
     			paths.getPath("banditRight"),
     			paths.getPath("banditLeft"),
@@ -82,7 +82,7 @@ class BanditController{
 		banditView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (CreatureView heroView) {
+	public boolean checkInteraction (FourPerspectiveView heroView) {
 		if (!banditModel.getAlive())
 			return false;
 		return banditView.intersects(heroView);

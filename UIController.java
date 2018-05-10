@@ -106,6 +106,7 @@ class UIController {
 		skillNr1.setVisible(false);
 		skillNr2.setVisible(false);
 		skillNr3.setVisible(false);
+		skillNr1.setHighlight(false);
 	}
 	
 	public void setHighlight(int whichOne) {

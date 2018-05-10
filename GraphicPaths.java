@@ -15,8 +15,8 @@ class GraphicPaths {
 	
 	private static final String CHEST = "environment/chest.png";
 	private static final String CHEST_OPEN = "environment/chest_open.png";
-	private static final String LADDER = "environment/ladder.jpg";
-	private static final String LADDER_SHORT = "environment/ladder_short.png";
+	private static final String BARREL = "environment/barrel.png";
+	private static final String BARREL_OPEN = "environment/barrel_open.png";
 	
 	//hero
 	private static final String HERO_FRONT = "character/character_front.png";
@@ -44,8 +44,11 @@ class GraphicPaths {
 	private static final String EKEY_LOOT = "UI/e-key_loot.png";
 	private static final String EKEY_USE = "UI/e-key_use.png";
 	
+	//stoppers
 	private static final String STOPPER_MAIN_VERTICAL = "stoppers/main_vertical.jpg";
 	private static final String STOPPER_MAIN_HORIZONTAL = "stoppers/main_horizontal.jpg";
+	private static final String STOPPER_FOREST_TOP = "stoppers/forest_top.jpg";
+	private static final String STOPPER_CHEST = "stoppers/chest.jpg";
 
 	
 	public GraphicPaths() {
@@ -67,8 +70,8 @@ class GraphicPaths {
 	        
 	        case "chest":		return FOLDER+CHEST;
 	        case "chestOpen":	return FOLDER+CHEST_OPEN;
-	        case "ladder":		return FOLDER+LADDER;
-	        case "ladderShort":		return FOLDER+LADDER_SHORT;
+	        case "barrel":		return FOLDER+BARREL;
+	        case "barrelOpen":		return FOLDER+BARREL_OPEN;
 	        
 	        //hero
 	        case "characterFront":	return FOLDER+HERO_FRONT;
@@ -99,6 +102,9 @@ class GraphicPaths {
 	        //stoppers
 	        case "stopperMainHorizontal":	return FOLDER+STOPPER_MAIN_HORIZONTAL;
 	        case "stopperMainVertical":	return FOLDER+STOPPER_MAIN_VERTICAL;
+	        case "stopperForestTop":	return FOLDER+STOPPER_FOREST_TOP;
+	        case "stopperChest":	return FOLDER+STOPPER_CHEST;
+	        
 	        default: return "";
     }
 		

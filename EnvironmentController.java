@@ -31,37 +31,22 @@ class EnvironmentController {
 		root.getChildren().add(environment);
 		environment.relocate(-1100, -2000);
 		
-		chestNr1 = new ChestController(environment, 2800, 1350, 300, 300, true, 1, 100);
-		chestNr2 = new ChestController(environment, 2700, 1350, 300, 300, true, 1, 100);
-		chestNr3 = new ChestController(environment, 1200, 2200, 300, 300, true, 1, 300);
+		chestNr1 = new ChestController(environment, 2800, 1100, 300, 300, true, 1, 100);
+		chestNr2 = new ChestController(environment, 2700, 1100, 300, 300, true, 2, 100);
+		chestNr3 = new ChestController(environment, 2200, 2600, 300, 300, true, 1, 300);
 		
 		boudaries = new StopperController(environment);
     }
     
-    //not finished
-    public double getNextMaxStepCharacterRelocateX(double dx, CreatureView heroView) {
-    	if ((heroView.getXposition() - environment.getLayoutX() + dx >= 960
-    			&& heroView.getXposition() - environment.getLayoutX() <= 960)
-    	|| (heroView.getXposition() - environment.getLayoutX() >= 960
-        		&& heroView.getXposition() - environment.getLayoutX() + dx <= 960))
-    		return heroView.getXposition() - environment.getLayoutX() - 960;
-    	
-       	if (heroView.getXposition() - environment.getLayoutX() > 960
-    			&& heroView.getXposition() - environment.getLayoutX() < 2040)
-    		return 0;
-       	else
-       		return dx;
-    }
-    
-    public boolean checkCanMove(double dx, double dy, CreatureView heroView) {
-    	return boudaries.checkCanMove(dx, dy, heroView);
+    public boolean checkCanMove(FourPerspectiveView heroView) {
+    	return boudaries.checkCanMove(heroView);
     }
     
     public void relocate(double dx, double dy) {
     	environment.relocate(environment.getLayoutX() - dx, environment.getLayoutY() - dy);
     }
     
-    public boolean checkInteractionsLoot(CreatureView heroView){
+    public boolean checkInteractionsLoot(FourPerspectiveView heroView){
     	if (chestNr1.checkInteraction(heroView)) {
     		nrChestInteraction = 1; return true;
     	}
@@ -74,7 +59,7 @@ class EnvironmentController {
     	return false;
     }
     
-    public boolean checkInteractionsUse(CreatureView heroView){
+    public boolean checkInteractionsUse(FourPerspectiveView heroView){
     	//option to do
     	return false;
     }
@@ -99,13 +84,17 @@ class ChestController{
 		chestModel = new Chest(xposition, yposition, xsize, ysize, active, type, value);
 		GraphicPaths paths = new GraphicPaths();
 		switch (type) {
-			case 1: chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), hook, xposition, yposition);
-			default:  chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), hook, xposition, yposition);
+			case 1: chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), 
+					hook, xposition, yposition, xsize, ysize); break;
+			case 2: chestView = new ChestView (paths.getPath("barrel"), paths.getPath("barrelOpen"),
+					hook, xposition, yposition, xsize, ysize); break;
+			default:  chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"),
+					hook, xposition, yposition, xsize, ysize); break;
 		}
 		chestView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (CreatureView heroView) {
+	public boolean checkInteraction (FourPerspectiveView heroView) {
 		if (!chestModel.getActive())
 			return false;
 		return chestView.intersects(heroView);
@@ -124,30 +113,41 @@ class ChestController{
 
 //testowanie granic mapy
 class StopperController{
-	private View upMain, downMain, leftMain, rightMain;
+	private View upMain, downMain, leftMain, rightMain, forestTop, forChest1, forChest2, forChest3;
 	
 	public StopperController(Group hook) {
 		GraphicPaths paths = new GraphicPaths();
 		upMain = new View(paths.getPath("stopperMainHorizontal"), hook, 2000, 1000);
-		upMain.setVisible(true);
+		//upMain.setVisible(true);
 		
 		downMain = new View(paths.getPath("stopperMainHorizontal"), hook, 2000, 4000);
-		downMain.setVisible(true);
-		
+		//downMain.setVisible(true);
 		
 		leftMain = new View(paths.getPath("stopperMainVertical"), hook, 500, 4000);
-		leftMain.setVisible(true);
+		//leftMain.setVisible(true);
 		
 		rightMain = new View(paths.getPath("stopperMainVertical"), hook, 3500, 4000);
-		rightMain.setVisible(true);
+		//rightMain.setVisible(true);
 		
-
+		forestTop = new View(paths.getPath("stopperForestTop"), hook, 2200, 1900);
+		//forestTop.setVisible(true);
+		
+		forChest1 = new View(paths.getPath("stopperChest"), hook, 2800, 1100);
+		//forChest1.setVisible(true);
+		
+		forChest2 = new View(paths.getPath("stopperChest"), hook, 2700, 1100);
+		//forChest2.setVisible(true);
+		
+		forChest3 = new View(paths.getPath("stopperChest"), hook, 2200, 2600);
+		//forChest3.setVisible(true);
 	}
 	
-	public boolean checkCanMove (double dx, double dy, CreatureView heroView) {
-		return (upMain.intersects(heroView)
+	public boolean checkCanMove (FourPerspectiveView heroView) {
+		return !(upMain.intersects(heroView)
 				|| downMain.intersects(heroView)
 				|| leftMain.intersects(heroView)
-				|| rightMain.intersects(heroView));
+				|| rightMain.intersects(heroView)
+				|| forestTop.intersects(heroView)
+				|| forChest1.intersects(heroView) || forChest2.intersects(heroView) || forChest3.intersects(heroView));
 	}
 }

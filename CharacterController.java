@@ -3,12 +3,12 @@ package application;
 import javafx.scene.Group;
 
 class CharacterController {
-	private CreatureView characterView;
+	private FourPerspectiveView characterView;
 	private Character characterModel;
 
     public CharacterController(Group hook) {
     	GraphicPaths paths = new GraphicPaths();
-    	characterView = new CreatureView (paths.getPath("characterFloor"),
+    	characterView = new FourPerspectiveView (paths.getPath("characterFloor"),
     			paths.getPath("characterFront"),
     			paths.getPath("characterRight"),
     			paths.getPath("characterLeft"),
@@ -22,7 +22,7 @@ class CharacterController {
     	return characterModel;
     }
     
-    public CreatureView getCharacterView(){
+    public FourPerspectiveView getCharacterView(){
     	return characterView;
     }
     
