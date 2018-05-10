@@ -3,15 +3,17 @@ package application;
 import javafx.scene.Group;
 
 class CharacterController {
-	private CharacterView characterView;
+	private CreatureView characterView;
 	private Character characterModel;
 
     public CharacterController(Group hook) {
     	GraphicPaths paths = new GraphicPaths();
-    	characterView = new CharacterView (paths.getPath("characterRight"),
+    	characterView = new CreatureView (paths.getPath("characterFloor"),
+    			paths.getPath("characterFront"),
+    			paths.getPath("characterRight"),
     			paths.getPath("characterLeft"),
     			paths.getPath("characterBack"),
-    			hook, 1000, 650);
+    			hook, 960, 690);
 		characterView.setVisible(true);
 		characterModel = new Character(1000, 650, 200, 200, 50, 50, 5, 5, 0);//x, y, xsize ysize hp maxHp dmg def money
     }
@@ -20,7 +22,7 @@ class CharacterController {
     	return characterModel;
     }
     
-    public CharacterView getCharacterView(){
+    public CreatureView getCharacterView(){
     	return characterView;
     }
     
@@ -32,8 +34,8 @@ class CharacterController {
     	return characterModel.getMoney();
     }
     
-    public void updateView(int dx, boolean ladder) {
-    	characterView.updateView(dx, ladder);
+    public void updateView(double dx, double dy) {
+    	characterView.updateView(dx, dy);
     }
     
 	public void healMax() {
@@ -55,6 +57,10 @@ class CharacterController {
 	
 	public void relocate(double dx, double dy) {
 		characterView.relocate(dx, dy);
+	}
+	
+	public void setVisible(boolean yesOrNot) {
+		characterView.setVisible(yesOrNot);
 	}
 
 }

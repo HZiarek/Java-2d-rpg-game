@@ -2,10 +2,6 @@ package application;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-
-import javafx.scene.paint.Color;
 
 /*
  * Graphic paths in every main controller (ui, environment, character, opponents)
@@ -13,8 +9,7 @@ import javafx.scene.paint.Color;
 
 public class Main extends Application {
 	
-	Controller mainController;
-	Group root;
+	private GameplayController mainController;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -29,15 +24,14 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}*/
-
-		root = new Group();
-		Scene scene = new Scene(root, 1800, 1000, Color.FORESTGREEN);
-		primaryStage.setScene(scene);
-		primaryStage.show();
 		
-		mainController = new Controller(root, scene);
-		//mainController.createLevel();
+		mainController = new GameplayController(primaryStage);
+		primaryStage.setFullScreen(true);
+		primaryStage.setFullScreenExitHint("");
+		
 		mainController.start();
+		
+		primaryStage.show();
 	}
 	
 	public static void main(String[] args) {

@@ -118,9 +118,9 @@ class Character extends Creature {
 	}
 }
 
-class Bear extends Creature{
+class Bandit extends Creature{
 	
-	public Bear(double xposition, double yposition, double xsize, double ysize,
+	public Bandit(double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def){
 		super (xposition, yposition, xsize, ysize, hp, maxHp, dmg, def);
 	}

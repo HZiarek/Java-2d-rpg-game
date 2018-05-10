@@ -9,7 +9,10 @@ class View {
 	protected Image image;
 	protected ImageView imageView;
 	protected Group hook;
-	private double Xposition, Yposition, Xsize, Ysize;
+	protected double Xposition;
+	protected double Yposition;
+	private double Xsize;
+	private double Ysize;
 
 	public View(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
 		this.hook = hook;
@@ -86,29 +89,44 @@ class ChestView extends View{
 	}
 }
 
-class CharacterView extends View{
+class CreatureView extends View{
+	private Image imageFront;
 	private Image imageLeft;
 	private Image imageBack;
-	private enum direction{
-		RIGHT, LEFT, BACK
+	private Image imageRight;
+	private ImageView perspectiveView;
+	private enum perspective{
+		RIGHT, LEFT, BACK, FRONT
 	} 
-	direction viewDirection;
+	perspective viewDirection;
 	
-	public CharacterView(String graphicPathRight, String graphicPathLeft, String graphicPathBack,
+	public CreatureView(String graphicPathFloor, String graphicPathFront, String graphicPathRight, String graphicPathLeft, String graphicPathBack,
 			Group hook, double xposition, double yposition, double xsize, double ysize) {
 		
-		super (graphicPathRight, hook, xposition, yposition, xsize, ysize);
+		super (graphicPathFloor, hook, xposition, yposition, xsize, ysize);
 		imageLeft = new Image(graphicPathLeft);
+		imageFront = new Image(graphicPathFront);
 		imageBack = new Image(graphicPathBack);
-		viewDirection = direction.RIGHT;
+		imageRight = new Image(graphicPathRight);
+		perspectiveView = new ImageView(imageFront);
+		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
+				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
+		hook.getChildren().add(perspectiveView);
+		viewDirection = perspective.FRONT;
 	}
 	
-	public CharacterView(String graphicPathRight, String graphicPathLeft, String graphicPathBack,
+	public CreatureView(String graphicPathFloor, String graphicPathFront,String graphicPathRight, String graphicPathLeft, String graphicPathBack,
 			Group hook, double xposition, double yposition) {
-		super (graphicPathRight, hook, xposition, yposition);
+		super (graphicPathFloor, hook, xposition, yposition);
 		imageLeft = new Image(graphicPathLeft);
+		imageFront = new Image(graphicPathFront);
 		imageBack = new Image(graphicPathBack);
-		viewDirection = direction.RIGHT;
+		imageRight = new Image(graphicPathRight);
+		perspectiveView = new ImageView(imageFront);
+		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
+				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
+		hook.getChildren().add(perspectiveView);
+		viewDirection = perspective.FRONT;
 	}
 	
 	public void changeImageOnLeft () {
@@ -120,56 +138,70 @@ class CharacterView extends View{
 	}
 	
 	public void changeImageOnRight () {
-		imageView.setImage(image);
+		imageView.setImage(imageRight);
 	}
 	
-	public void updateView(int dx, boolean ladder) {
-		if (ladder) {
-			if (viewDirection == direction.BACK)
+	public void updateView(double dx, double dy) {
+		if (dy>0) {
+			if (viewDirection == perspective.FRONT)
 				return;
 			else {
-				imageView.setImage(imageBack);
-				viewDirection = direction.BACK;
-			}		
+				perspectiveView.setImage(imageFront);
+				viewDirection = perspective.FRONT;
+			}	
+		}
+		if (dy<0) {
+			if (viewDirection == perspective.BACK)
+				return;
+			else {
+				perspectiveView.setImage(imageBack);
+				viewDirection = perspective.BACK;
+			}
 		}
 		if (dx>0) {
-			if (viewDirection == direction.RIGHT)
+			if (viewDirection == perspective.RIGHT)
 				return;
 			else {
-				imageView.setImage(image);
-				viewDirection = direction.RIGHT;
+				perspectiveView.setImage(imageRight);
+				viewDirection = perspective.RIGHT;
 			}	
 		}
 		if (dx<0) {
-			if (viewDirection == direction.LEFT)
+			if (viewDirection == perspective.LEFT)
 				return;
 			else {
-				imageView.setImage(imageLeft);
-				viewDirection = direction.LEFT;
+				perspectiveView.setImage(imageLeft);
+				viewDirection = perspective.LEFT;
 			}
 		}
 	}
 }
 
-class LadderView extends View{
-	
-	public LadderView(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
-		super (graphicPath, hook, xposition, yposition, xsize, ysize);
-	}
-	
-	public LadderView(String graphicPath, Group hook, double xposition, double yposition) {
-		super (graphicPath, hook, xposition, yposition);
-	}
-}
 
-class BearView extends View{
-	
-	public BearView(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
-		super (graphicPath, hook, xposition, yposition, xsize, ysize);
+class MainMenuView{
+	private Group root;
+	private View background, options, highlight;
+
+	public MainMenuView (Group group) {
+		root = group;
+		GraphicPaths paths = new GraphicPaths();
+		background = new View (paths.getPath("mainMenuBackground"), root, 960, 1080);
+		options = new View (paths.getPath("mainMenuOptions"), root, 960, 1080);
+		highlight = new View (paths.getPath("mainMenuHighlight"), root, 380, 565);
+		background.setVisible(true);
+		options.setVisible(true);
+		highlight.setVisible(true);
 	}
 	
-	public BearView(String graphicPath, Group hook, double xposition, double yposition) {
-		super (graphicPath, hook, xposition, yposition);
+	public void updateHighlightPosition(int currentOption) {
+        double currentX = highlight.getXposition();
+        double currentY = highlight.getYposition();
+        
+		switch (currentOption) {
+    		case 0:  highlight.relocate(380 - currentX, 565 - currentY); break;
+    		case 1:  highlight.relocate(350 - currentX, 780 - currentY); break;
+    		case 2:  highlight.relocate(350 - currentX, 1000 - currentY); break;
+		}
 	}
 }
 

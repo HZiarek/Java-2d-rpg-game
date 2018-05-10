@@ -106,23 +106,3 @@ class Chest extends Item{
 		value = newValue;
 	}
 }
-
-class Ladder extends Item{
-	private double height;
-	private int type;
-	
-	public Ladder(double xposition, double yposition, double xsize, double ysize,
-			boolean active, double height, int type){
-		super (xposition, yposition, xsize, ysize, active);
-		this.height = height;
-		this.type = type;
-	}
-	
-	public double getHeight() {
-		return height;
-	}
-	
-	public void setHeight(double newHeight) {
-		height = newHeight;
-	}
-}

@@ -48,7 +48,7 @@ class UIController {
 		ui.getChildren().add(goldText);
 		goldText.relocate(1500, 10);
 		
-		mainTask = "Main task:\n	Find 500 gold";
+		mainTask = "Find 500 gold";
 		mainTaskText = new Text(mainTask);
 		mainTaskText.setFont(Font.font ("Verdana", FontWeight.BOLD, 30));
 		mainTaskText.setFill(Color.BISQUE);

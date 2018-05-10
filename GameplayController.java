@@ -1,15 +1,14 @@
 package application;
 
-import com.sun.javafx.webkit.UIClientImpl;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
-class Controller {
+class GameplayController {
 	private Scene myScene;
 	private Group root;
 	private CharacterController character;
@@ -17,25 +16,34 @@ class Controller {
 	private OpponentsController opponents;
 	private UIController ui;
 	private int activeSkill;
+	
+	private MainMenuView mainMenuView;
+	private int currentOption;
     
     boolean goUp, goDown, goRight, goLeft,
     	interactionLoot, interactionUse, interactionActive,
-    	inCombat, onLadder,
-    	isPlayerTurn;
+    	inCombat, isPlayerTurn;
 
-	public Controller (Group group, Scene scene) {
-		root = group;
-		environment = new EnvironmentController(root);
-		opponents = new OpponentsController(root);
-		character = new CharacterController(root);
-		ui = new UIController(root);
-		myScene = scene;
+	public GameplayController (Stage stage) {
+		root = new Group();
+		myScene = new Scene(root);
+		mainMenuView = new MainMenuView(root);
+		stage.setScene(myScene);
+		
 		interactionLoot = false;
 		interactionUse = false;
 		inCombat = false;
 		interactionActive = false;
 		activeSkill = 1;
 		isPlayerTurn = false;
+		currentOption = 0;
+	}
+	
+	private void createLevel() {
+		environment = new EnvironmentController(root);
+		opponents = new OpponentsController(root);
+		character = new CharacterController(root);
+		ui = new UIController(root);
 	}
 	
 	public void start() {
@@ -45,15 +53,15 @@ class Controller {
 	        @Override
 	        public void handle(KeyEvent event) {
 	            switch (event.getCode()) {
-	                case UP:    goUp = true; break;
-	                case DOWN:  goDown = true; break;
+	                case UP:    useUpKey(); break;
+	                case DOWN:  useDownKey(); break;
 	                case LEFT:  goLeft  = true; break;
 	                case RIGHT: goRight  = true; break;
 	                case E:		if (interactionActive) serviceInteraction(); break;
 	                case DIGIT1:	{ui.setHighlight(1); activeSkill = 1;} break;
 	                case DIGIT2:	{ui.setHighlight(2); activeSkill = 2;} break;
 	                case DIGIT3:	{ui.setHighlight(3); activeSkill = 3;} break;
-	                case ENTER:		useSelectedSkill(); break;
+	                case ENTER:		useEnterKey(); break;
 	                case ESCAPE:	Platform.exit(); break;
 	            }
 	        }
@@ -74,17 +82,55 @@ class Controller {
 		AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-            	if (!inCombat && !onLadder)
-            		exploration();
-            	if (inCombat)
-            		combat();
-            	if (onLadder)
-            		usingLadder();
-                }
+            	if (mainMenuView != null) {
+            		mainMenuView.updateHighlightPosition(currentOption);
+            	}
+            	else {
+            		if (!inCombat)
+            			exploration();
+            		else
+            			combat();
+            	}}
         };
         timer.start();
 	}
 	
+	private void useUpKey() {
+		if (mainMenuView == null)
+			goUp = true;
+		else
+			if (currentOption == 0)
+				currentOption = 2;
+			else
+				currentOption = (currentOption - 1)%3;
+	}
+	
+	private void useDownKey() {
+		if (mainMenuView == null)
+			goDown = true;
+		else
+			currentOption = (currentOption + 1)%3;
+	}
+	
+	private void useEnterKey() {
+		if (mainMenuView == null)
+			useSelectedSkill();
+		else
+			chooseOptionInMainMenu();
+	}
+	
+	private void chooseOptionInMainMenu() {
+		switch (currentOption) {
+			case 0: startNewGame(); break;
+			case 1: break;
+			case 2: Platform.exit(); break;
+		}
+	}
+	
+	private void startNewGame() {
+		mainMenuView = null;
+		createLevel();
+	}
 	
 	private void serviceInteraction() {
 		if (interactionLoot) {
@@ -93,22 +139,19 @@ class Controller {
 			ui.updateGold(character.getMoney());
 		}
 		
+		/*possibly to do later
 		if (interactionUse) {
-			onLadder = true;
-			environment.useLadder(character.getCharacterView());
-			character.updateView(0, true);
-			ui.showEkeyUse(false);
-		}
+			
+		}*/
 	}
 	
 	private void exploration() {
 		int dx = 0, dy = 0;
-        if (goRight)  dx += 10;
-        if (goLeft)  dx -= 10;
-        if (goUp) dy -= 10;
-        if (goDown) dy += 10;
+        if (goRight)  dx += 12;
+        if (goLeft)  dx -= 12;
+        if (goUp) dy -= 12;
+        if (goDown) dy += 12;
         
-        character.updateView(dx, false);
         moveCharacter(dx, dy);
         
         interactionLoot = environment.checkInteractionsLoot(character.getCharacterView());
@@ -133,24 +176,17 @@ class Controller {
 		ui.changeHp(character.getHp());
 	}
 	
-	private void usingLadder() {
-		int dy = 0;
-        if (goUp) dy -= 10;
-        if (goDown) dy += 10;
-        
-        onLadder = environment.climbAndCheckIsStillOnLadder(dy, character.getCharacterView());
-        if (!onLadder)
-        	character.updateView(10, false);
-	}
-	
 	private void moveCharacter (double dx, double dy) {
 		if (dx == 0 && dy == 0)
 			return;
-		if (!environment.checkCanMoveAndRelocate(dx, dy, character.getCharacterView()))
-			opponents.relocate(dx, dy);
-		else
-			if (!environment.checkMustStop(dx, dy, character.getCharacterView()))
-				character.relocate(dx, dy);
+		
+        character.updateView(dx, dy);
+ 
+		//environment.getNextMaxStepCharacterRelocateX(dx, character.getCharacterView());
+		
+        opponents.relocate(dx, dy);
+		environment.relocate(dx, dy);
+
 	}
 	
 	private void useSelectedSkill() {

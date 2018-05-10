@@ -4,7 +4,7 @@ import javafx.scene.Group;
 
 class OpponentsController {
     private Group root, opponents;
-    private BearController bear;
+    private BanditController bear;
     private int nrOpponentInteraction;
     private int numberOfOpponentsInFight;
     
@@ -19,7 +19,7 @@ class OpponentsController {
     	nrOpponentInteraction = 0;
     	numberOfOpponentsInFight = 0;
     	pseudoTimeCounter = 0;
-		bear = new BearController(opponents, 1650, 1360, 500, 300, 100, 15, 5, 10);
+		bear = new BanditController(opponents, 1200, 100, 200, 200, 15, 15, 10, 1);//x, y, xsize ysize hp maxHp dmg def
     }
 	
     public void relocate(double dx, double dy) {
@@ -28,7 +28,7 @@ class OpponentsController {
     	opponents.setLayoutY(opponents.getLayoutY() - dy);
     }
     
-    public boolean checkInteractions(CharacterView heroView){
+    public boolean checkInteractions(CreatureView heroView){
     	if (bear.checkInteraction(heroView)) {
     		nrOpponentInteraction = 1;
     		numberOfOpponentsInFight++;
@@ -65,27 +65,32 @@ class OpponentsController {
 	}
 }
 
-class BearController{
-	private Bear bearModel;
-	private BearView bearView;
+class BanditController{
+	private Bandit banditModel;
+	private CreatureView banditView;
 	
-	public BearController(Group hook, double xposition, double yposition, double xsize, double ysize,
+	public BanditController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def) {
 		GraphicPaths paths = new GraphicPaths();
-		bearView = new BearView (paths.getPath("bear"), hook, xposition, yposition, xsize, ysize);
-		bearModel = new Bear(xposition, yposition - 450, xsize, ysize, hp, maxHp, dmg, def);
-		bearView.setVisible(true);
+		banditView = new CreatureView (paths.getPath("banditFloor"),
+    			paths.getPath("banditFront"),
+    			paths.getPath("banditRight"),
+    			paths.getPath("banditLeft"),
+    			paths.getPath("banditBack"),
+    			hook, xposition, yposition, xsize, ysize);
+		banditModel = new Bandit(xposition, yposition, xsize, ysize, hp, maxHp, dmg, def);
+		banditView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (CharacterView heroView) {
-		if (!bearModel.getAlive())
+	public boolean checkInteraction (CreatureView heroView) {
+		if (!banditModel.getAlive())
 			return false;
-		return bearView.intersects(heroView);
+		return banditView.intersects(heroView);
 	}
 	
 	public boolean changeHpAndCheckIsDead(int howManyPoints) {
-		if (!bearModel.changeHpAndCheckIsDead(howManyPoints)) {
-			bearView.setVisible(false);
+		if (!banditModel.changeHpAndCheckIsDead(howManyPoints)) {
+			banditView.setVisible(false);
 			return true;
 		}
 		else
@@ -93,6 +98,6 @@ class BearController{
 	}
 	
 	public void makeMove (CharacterController character) {
-		character.changeHpAndCheckIsDead(-bearModel.getDamage());
+		character.changeHpAndCheckIsDead(-banditModel.getDamage());
 	}
 }
