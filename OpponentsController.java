@@ -1,10 +1,11 @@
 package application;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 
 class OpponentsController {
     private Group root, opponents;
-    private BanditController bear;
+    private BanditController bandit;
     private int nrOpponentInteraction;
     private int numberOfOpponentsInFight;
     
@@ -19,7 +20,7 @@ class OpponentsController {
     	nrOpponentInteraction = 0;
     	numberOfOpponentsInFight = 0;
     	pseudoTimeCounter = 0;
-		bear = new BanditController(opponents, 70, -200, 200, 200, 15, 15, 10, 1);//x, y, xsize ysize hp maxHp dmg def
+		bandit = new BanditController(opponents, 700, -760, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
     }
 	
     public void relocate(double dx, double dy) {
@@ -29,8 +30,10 @@ class OpponentsController {
     }
     
     public boolean checkInteractions(FourPerspectiveView heroView){
-    	if (bear.checkInteraction(heroView)) {
+    	if (bandit.checkInteraction(heroView)) {
     		nrOpponentInteraction = 1;
+    		bandit.showHp();
+    		bandit.isMyTurn(true);
     		numberOfOpponentsInFight++;
     		return true;
     	}
@@ -42,8 +45,10 @@ class OpponentsController {
     }
     
     public void attacked(int howManyPoints) {
-    	if (bear.changeHpAndCheckIsDead(howManyPoints))
+    	if (bandit.changeHpAndCheckIsDead(howManyPoints))
     		numberOfOpponentsInFight--;
+    	else
+    		bandit.isMyTurn(true);
     }
     
 	
@@ -54,23 +59,39 @@ class OpponentsController {
 			return true;
 	}
 	
-	public boolean opponentsTurn (CharacterController character) {
+	public int opponentsTurn () {
 		pseudoTimeCounter++;
 		if (pseudoTimeCounter < 120)
-			return false;
-		else
-			pseudoTimeCounter = 0;
-		bear.makeMove(character);
-		return true;
+			return 0;
+		
+		bandit.isMyTurn(false);
+		pseudoTimeCounter = 0;
+		return bandit.attack();
+	}
+	
+	public void animation() {
+		bandit.hpMovingAnimation();
+	}
+	
+	public void isOpponentTurn() {
+		bandit.isMyTurn(true);
 	}
 }
 
 class BanditController{
 	private Bandit banditModel;
 	private FourPerspectiveView banditView;
+	private HpController hp;
+	private View turnPointer;
+	private TextView hpChange;
+	private boolean animation;
+	private int animationFrameCounter;
 	
 	public BanditController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def) {
+		animation = false;
+		animationFrameCounter = 0;
+		
 		GraphicPaths paths = new GraphicPaths();
 		banditView = new FourPerspectiveView (paths.getPath("banditFloor"),
     			paths.getPath("banditFront"),
@@ -80,6 +101,25 @@ class BanditController{
     			hook, xposition, yposition, xsize, ysize);
 		banditModel = new Bandit(xposition, yposition, xsize, ysize, hp, maxHp, dmg, def);
 		banditView.setVisible(true);
+		this.hp = new HpController (hook, paths.getPath("banditHpStripe"), paths.getPath("banditPieceOfHp"),
+				hp, xposition - 20, yposition + 70, 10);
+		turnPointer = new View(paths.getPath("turnPointer"), hook, xposition - 40, yposition - 300);
+		hpChange = new TextView("", hook, xposition + 40, yposition - 250, 50, Color.RED);
+		hpChange.setVisible(true);
+	}
+	
+	public void hpMovingAnimation() {
+		if (!animation)
+			return;
+		
+		hpChange.relocate(0, -1);
+		animationFrameCounter++;
+		if (animationFrameCounter == 50) {
+			animation = false;
+			animationFrameCounter = 0;
+			hpChange.setText("");
+			hpChange.relocate(0, 51);
+		}
 	}
 	
 	public boolean checkInteraction (FourPerspectiveView heroView) {
@@ -89,15 +129,29 @@ class BanditController{
 	}
 	
 	public boolean changeHpAndCheckIsDead(int howManyPoints) {
+		hpChange.setText("" + howManyPoints);
+		animation = true;
 		if (!banditModel.changeHpAndCheckIsDead(howManyPoints)) {
 			banditView.setVisible(false);
+			hp.setVisible(false);
+			turnPointer.setVisible(false);
 			return true;
 		}
-		else
-			return false;
+		
+		hp.changeHp(banditModel.getHp());
+		return false;
 	}
 	
-	public void makeMove (CharacterController character) {
-		character.changeHpAndCheckIsDead(-banditModel.getDamage());
+	public int attack() {
+		return banditModel.getDamage();
 	}
+	
+	public void showHp() {
+		hp.setVisible(true);
+	}
+	
+	public void isMyTurn (boolean isIt) {
+		turnPointer.setVisible(isIt);
+	}
+	
 }

@@ -5,19 +5,15 @@ class Creature extends Model {
 	private int hp;
 	private int maxHp;
 	private int damage;
-	private int defense; //if def skill -> dmg = hp - atack
-	private boolean defenseIsActive;
 	
 	public Creature(double xposition, double yposition, double xsize, double ysize,
-			int hp, int maxHp, int dmg, int def){
+			int hp, int maxHp, int dmg){
 		super (xposition, yposition, xsize, ysize);
 		this.hp = hp;
 		if (maxHp < hp)
 			this.maxHp = hp;
 		this.maxHp = maxHp;
 		damage = dmg;
-		defense = def;
-		defenseIsActive = false;
 		alive = true;
 	}
 	
@@ -71,22 +67,6 @@ class Creature extends Model {
 		damage = dmg;
 	}
 	
-	public int getDefense() {
-		return defense;
-	}
-	
-	public void setDefense(int def) {
-		defense = def;
-	}
-	
-	public boolean getDefenseIsActive() {
-		return defenseIsActive;
-	}
-	
-	public void setDefenseIsActive(boolean isActive) {
-		defenseIsActive = isActive;
-	}
-	
 }
 
 class Character extends Creature {
@@ -94,7 +74,7 @@ class Character extends Creature {
 	
 	public Character(double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def, int money){
-		super (xposition, yposition, xsize, ysize, hp, maxHp, dmg, def);
+		super (xposition, yposition, xsize, ysize, hp, maxHp, dmg);
 		this.money = money;
 	}
 	
@@ -122,6 +102,6 @@ class Bandit extends Creature{
 	
 	public Bandit(double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def){
-		super (xposition, yposition, xsize, ysize, hp, maxHp, dmg, def);
+		super (xposition, yposition, xsize, ysize, hp, maxHp, dmg);
 	}
 }

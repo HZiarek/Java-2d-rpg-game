@@ -1,10 +1,15 @@
 package application;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 
 class CharacterController {
 	private FourPerspectiveView characterView;
 	private Character characterModel;
+	private View turnPointer;
+	private TextView hpChange;
+	private boolean animation;
+	private int animationFrameCounter;
 
     public CharacterController(Group hook) {
     	GraphicPaths paths = new GraphicPaths();
@@ -16,6 +21,10 @@ class CharacterController {
     			hook, 960, 690);
 		characterView.setVisible(true);
 		characterModel = new Character(1000, 650, 200, 200, 50, 50, 5, 5, 0);//x, y, xsize ysize hp maxHp dmg def money
+		turnPointer = new View(paths.getPath("turnPointer"), hook, 920, 450);
+		
+		hpChange = new TextView("", hook, 900, 400, 50, Color.RED);
+		hpChange.setVisible(true);
     }
     
     public Character getCharacterModel(){
@@ -42,11 +51,24 @@ class CharacterController {
 		characterModel.setHp(characterModel.getMaxHp());
 	}
 	
-	public void defense() {
-		characterModel.setDefenseIsActive(true);
+	public void hpMovingAnimation() {
+		if (!animation)
+			return;
+		
+		hpChange.relocate(0, -1);
+		animationFrameCounter++;
+		if (animationFrameCounter == 50) {
+			animation = false;
+			animationFrameCounter = 0;
+			hpChange.setText("");
+			hpChange.relocate(0, 51);
+		}
 	}
 	
 	public void changeHpAndCheckIsDead(int howManyPoints) {
+		hpChange.setText("" + howManyPoints);
+		hpChange.setColor(Color.RED);
+		animation = true;
 		if (!characterModel.changeHpAndCheckIsDead(howManyPoints))
 			characterView.setVisible(false);
 	}
@@ -61,6 +83,17 @@ class CharacterController {
 	
 	public void setVisible(boolean yesOrNot) {
 		characterView.setVisible(yesOrNot);
+	}
+	
+	public void heal(int howManyPoints) {
+		hpChange.setText("" + howManyPoints);
+		hpChange.setColor(Color.LIMEGREEN);
+		animation = true;
+		characterModel.changeHpAndCheckIsDead(howManyPoints);
+	}
+	
+	public void isMyTurn (boolean isIt) {
+		turnPointer.setVisible(isIt);
 	}
 
 }

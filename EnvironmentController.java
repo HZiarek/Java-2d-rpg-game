@@ -33,7 +33,7 @@ class EnvironmentController {
 		
 		chestNr1 = new ChestController(environment, 2800, 1100, 300, 300, true, 1, 100);
 		chestNr2 = new ChestController(environment, 2700, 1100, 300, 300, true, 2, 100);
-		chestNr3 = new ChestController(environment, 2200, 2600, 300, 300, true, 1, 300);
+		chestNr3 = new ChestController(environment, 2150, 2600, 300, 300, true, 1, 300);
 		
 		boudaries = new StopperController(environment);
     }
@@ -138,7 +138,7 @@ class StopperController{
 		forChest2 = new View(paths.getPath("stopperChest"), hook, 2700, 1100);
 		//forChest2.setVisible(true);
 		
-		forChest3 = new View(paths.getPath("stopperChest"), hook, 2200, 2600);
+		forChest3 = new View(paths.getPath("stopperChest"), hook, 2150, 2600);
 		//forChest3.setVisible(true);
 	}
 	

@@ -13,6 +13,7 @@ class View {
 	protected double Yposition;
 	private double Xsize;
 	private double Ysize;
+	private boolean isVisible;
 
 	public View(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
 		this.hook = hook;
@@ -24,6 +25,7 @@ class View {
 		imageView = new ImageView(image);
 		imageView.relocate(xposition - (imageView.getBoundsInLocal().getWidth()/2),
 				yposition - (imageView.getBoundsInLocal().getHeight()));
+		isVisible = false;
 	}
 	
 	public View(String graphicPath, Group hook, double xposition, double yposition) {
@@ -39,10 +41,17 @@ class View {
 	}
 	
 	public void setVisible(boolean onOrOff) {
-		if (onOrOff)
+		if ((onOrOff && isVisible) || (!onOrOff && !isVisible))
+			return;
+		
+		if (onOrOff) {
 			hook.getChildren().add(imageView);
-		else
+			isVisible = true;
+		}
+		else {
 			hook.getChildren().remove(imageView);
+			isVisible = false;
+		}
 	}
 	
 	public Rectangle2D getBoundary(){
@@ -108,10 +117,10 @@ class FourPerspectiveView extends View{
 		imageFront = new Image(graphicPathFront);
 		imageBack = new Image(graphicPathBack);
 		imageRight = new Image(graphicPathRight);
-		perspectiveView = new ImageView(imageFront);
+		perspectiveView = new ImageView(imageLeft);
 		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
 				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
-		viewDirection = perspective.FRONT;
+		viewDirection = perspective.LEFT;
 	}
 	
 	public FourPerspectiveView(String graphicPathFloor, String graphicPathFront,String graphicPathRight, String graphicPathLeft, String graphicPathBack,
@@ -121,10 +130,10 @@ class FourPerspectiveView extends View{
 		imageFront = new Image(graphicPathFront);
 		imageBack = new Image(graphicPathBack);
 		imageRight = new Image(graphicPathRight);
-		perspectiveView = new ImageView(imageFront);
+		perspectiveView = new ImageView(imageLeft);
 		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
 				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
-		viewDirection = perspective.FRONT;
+		viewDirection = perspective.LEFT;
 	}
 	
 	public void changeImageOnLeft () {

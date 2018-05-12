@@ -31,6 +31,8 @@ class GraphicPaths {
 	private static final String BANDIT_LEFT = "opponents/bandit_left.png";
 	private static final String BANDIT_BACK = "opponents/bandit_back.png";
 	private static final String BANDIT_FLOOR = "opponents/bandit_floor.png";
+	private static final String BANDIT_PIECE_OF_HP = "UI/bandit_piece_of_hp.jpg";
+	private static final String BANDIT_HP_STRIPE = "UI/bandit_hp_stripe.jpg";
 	
 	//skills
 	private static final String SKILL_ATTACK = "UI/attack_skill.jpg";
@@ -43,6 +45,7 @@ class GraphicPaths {
 	private static final String HP_STRIPE = "UI/hp_stripe.jpg";
 	private static final String EKEY_LOOT = "UI/e-key_loot.png";
 	private static final String EKEY_USE = "UI/e-key_use.png";
+	private static final String TURN_POINTER = "UI/turn_pointer.png";
 	
 	//stoppers
 	private static final String STOPPER_MAIN_VERTICAL = "stoppers/main_vertical.jpg";
@@ -86,6 +89,8 @@ class GraphicPaths {
 	        case "banditRight":	return FOLDER+BANDIT_RIGHT;
 	        case "banditBack":	return FOLDER+BANDIT_BACK;
 	        case "banditFloor":	return FOLDER+BANDIT_FLOOR;
+	        case "banditPieceOfHp":	return FOLDER+BANDIT_PIECE_OF_HP;
+	        case "banditHpStripe":	return FOLDER+BANDIT_HP_STRIPE;
 	        
 	        //skills
 	        case "skillAttack":	return FOLDER+SKILL_ATTACK;
@@ -98,6 +103,7 @@ class GraphicPaths {
 	        case "hpStripe":	return FOLDER+HP_STRIPE;
 	        case "eKeyUse":		return FOLDER+EKEY_USE;
 	        case "eKeyLoot":	return FOLDER+EKEY_LOOT;
+	        case "turnPointer":	return FOLDER+TURN_POINTER;
 	        
 	        //stoppers
 	        case "stopperMainHorizontal":	return FOLDER+STOPPER_MAIN_HORIZONTAL;

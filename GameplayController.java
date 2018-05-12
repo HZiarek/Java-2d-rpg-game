@@ -86,10 +86,14 @@ class GameplayController {
             		mainMenuView.updateHighlightPosition(currentOption);
             	}
             	else {
+            		opponents.animation();
+            		character.hpMovingAnimation();
             		if (!inCombat)
             			exploration();
-            		else
+            		else {
             			combat();
+            		}
+            			
             	}}
         };
         timer.start();
@@ -169,12 +173,25 @@ class GameplayController {
 		if (!opponents.isFight()) {
 			inCombat = false;
 			ui.hideCombatUI();
-			moveCharacter(0, -1);
+			moveCharacter(1, 0);
 		}
-		if (isPlayerTurn)
+		
+		if (isPlayerTurn) {
 			return;
-		isPlayerTurn = opponents.opponentsTurn(character);
-		ui.changeHp(character.getHp());
+		}
+			
+		
+		int opponentDamage = opponents.opponentsTurn();
+		if (opponentDamage != 0) {
+			isPlayerTurn = true;
+			character.isMyTurn(true);
+			character.changeHpAndCheckIsDead(-opponentDamage);
+			ui.changeHp(character.getHp());
+		}
+		else {
+			character.isMyTurn(false);
+			isPlayerTurn = false;
+		}
 	}
 	
 	private void moveCharacter (double dx, double dy) {
@@ -197,9 +214,9 @@ class GameplayController {
 		if (!inCombat || !isPlayerTurn)
 			return;
 		switch(activeSkill) {
-			case 1: opponents.attacked(-10); break;
-			case 2: {character.healMax(); ui.changeHp(character.getHp());} break;
-			case 3: character.defense(); break;
+			case 1: {opponents.attacked(-7);} break;
+			case 2: {opponents.attacked(-10);} break;
+			case 3: {character.heal(15); ui.changeHp(character.getHp()); opponents.isOpponentTurn();} break;
 			default: Platform.exit();
 		}
 		
