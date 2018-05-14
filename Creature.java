@@ -2,6 +2,7 @@ package application;
 
 class Creature extends Model {
 	private boolean alive;
+	private boolean inFight;
 	private int hp;
 	private int maxHp;
 	private int damage;
@@ -15,6 +16,7 @@ class Creature extends Model {
 		this.maxHp = maxHp;
 		damage = dmg;
 		alive = true;
+		inFight = false;
 	}
 	
 	public boolean getAlive() {
@@ -65,6 +67,14 @@ class Creature extends Model {
 	
 	public void setDamage(int dmg) {
 		damage = dmg;
+	}
+	
+	public void setInFight(boolean yesOrNot) {
+		inFight = yesOrNot;
+	}
+	
+	public boolean getInFight() {
+		return inFight;
 	}
 	
 }

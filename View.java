@@ -4,6 +4,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 class View {
 	protected Image image;
@@ -223,5 +224,23 @@ class MainMenuView{
     		case 2:  highlight.relocate(350 - currentX, 1000 - currentY); break;
 		}
 	}
+}
+
+class MapView {
+    private Pane backgroundLayer;
+	private Image backgroundImage;
+	private ImageView backgroundView;
+	
+    public MapView(String graphicPath, Group hook) {
+    	GraphicPaths paths = new GraphicPaths();
+    	backgroundImage = new Image(paths.getPath("map"));
+    	backgroundView = new ImageView (backgroundImage);
+    	backgroundLayer = new Pane();
+    	backgroundLayer.getChildren().add(backgroundView);
+    	hook.getChildren().add(backgroundLayer);
+    }
+    
+    
+
 }
 

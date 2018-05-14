@@ -36,7 +36,7 @@ class GraphicPaths {
 	
 	//skills
 	private static final String SKILL_ATTACK = "UI/attack_skill.jpg";
-	private static final String SKILL_DEFENSE = "UI/defense_skill.jpg";
+	private static final String STRONG_ATTACK = "UI/defense_skill.jpg";
 	private static final String SKILL_HEAL = "UI/healing_skill.jpg";
 	private static final String SKILL_HIGHLIGHT = "UI/highlight.png";
 	
@@ -46,6 +46,7 @@ class GraphicPaths {
 	private static final String EKEY_LOOT = "UI/e-key_loot.png";
 	private static final String EKEY_USE = "UI/e-key_use.png";
 	private static final String TURN_POINTER = "UI/turn_pointer.png";
+	private static final String FINAL_WINDOW = "UI/final_window.jpg";
 	
 	//stoppers
 	private static final String STOPPER_MAIN_VERTICAL = "stoppers/main_vertical.jpg";
@@ -94,7 +95,7 @@ class GraphicPaths {
 	        
 	        //skills
 	        case "skillAttack":	return FOLDER+SKILL_ATTACK;
-	        case "skillDefense":	return FOLDER+SKILL_DEFENSE;
+	        case "skillStrongAttack":	return FOLDER+STRONG_ATTACK;
 	        case "skillHeal":	return FOLDER+SKILL_HEAL;
 	        case "skillHightlight":	return FOLDER+SKILL_HIGHLIGHT;
 	        
@@ -104,6 +105,7 @@ class GraphicPaths {
 	        case "eKeyUse":		return FOLDER+EKEY_USE;
 	        case "eKeyLoot":	return FOLDER+EKEY_LOOT;
 	        case "turnPointer":	return FOLDER+TURN_POINTER;
+	        case "finalWindow": return FOLDER+FINAL_WINDOW;
 	        
 	        //stoppers
 	        case "stopperMainHorizontal":	return FOLDER+STOPPER_MAIN_HORIZONTAL;

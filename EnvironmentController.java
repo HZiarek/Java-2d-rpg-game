@@ -1,34 +1,26 @@
 package application;
 
 import javafx.scene.Group;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 class EnvironmentController {
     private Group root, environment;
-    private Pane backgroundLayer;
-	private Image backgroundImage;
-	private ImageView backgroundView;
+    private MapView mapView;
 	private ChestController chestNr1, chestNr2, chestNr3;
-	int nrChestInteraction, nrLadderInteraction;
+	int nrChestInteraction;
 	
 	//testowanie granic mapy
 	private StopperController boudaries;
-
     
     public EnvironmentController(Group hook) {
     	root = hook;
     	nrChestInteraction = 0;
-    	nrLadderInteraction = 0;
     	GraphicPaths paths = new GraphicPaths();
     	
-    	backgroundImage = new Image(paths.getPath("map"));
-    	backgroundView = new ImageView (backgroundImage);
-    	backgroundLayer = new Pane();
-		backgroundLayer.getChildren().add(backgroundView);
-		environment = new Group (backgroundLayer);
+    	environment = new Group ();
 		root.getChildren().add(environment);
+		
+		mapView = new MapView(paths.getPath("map"), environment);
+		
 		environment.relocate(-1100, -2000);
 		
 		chestNr1 = new ChestController(environment, 2800, 1100, 300, 300, true, 1, 100);
@@ -129,7 +121,7 @@ class StopperController{
 		rightMain = new View(paths.getPath("stopperMainVertical"), hook, 3500, 4000);
 		//rightMain.setVisible(true);
 		
-		forestTop = new View(paths.getPath("stopperForestTop"), hook, 2200, 1900);
+		forestTop = new View(paths.getPath("stopperForestTop"), hook, 2150, 1930);
 		//forestTop.setVisible(true);
 		
 		forChest1 = new View(paths.getPath("stopperChest"), hook, 2800, 1100);

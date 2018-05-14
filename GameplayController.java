@@ -13,9 +13,10 @@ class GameplayController {
 	private Group root;
 	private CharacterController character;
 	private EnvironmentController environment;
-	private OpponentsController opponents;
+	private BanditController bandit;
 	private UIController ui;
 	private int activeSkill;
+	private AnimationTimer timer;
 	
 	private MainMenuView mainMenuView;
 	private int currentOption;
@@ -41,7 +42,8 @@ class GameplayController {
 	
 	private void createLevel() {
 		environment = new EnvironmentController(root);
-		opponents = new OpponentsController(root);
+		//bandit = new BanditController(root, 700, -760, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
+		bandit = new BanditController(root, 1000, -750, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
 		character = new CharacterController(root);
 		ui = new UIController(root);
 	}
@@ -79,14 +81,14 @@ class GameplayController {
 	        }
 	    });
 				
-		AnimationTimer timer = new AnimationTimer() {
+		timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
             	if (mainMenuView != null) {
             		mainMenuView.updateHighlightPosition(currentOption);
             	}
             	else {
-            		opponents.animation();
+            		bandit.animation();
             		character.hpMovingAnimation();
             		if (!inCombat)
             			exploration();
@@ -141,11 +143,14 @@ class GameplayController {
 			int money = environment.pickUpMoney();
 			character.changeMoney(money);
 			ui.updateGold(character.getMoney());
+			if (character.getMoney() == 500) {
+				showFinalWindow(true);
+				timer.stop();
+			}
 		}
 		
 		/*possibly to do later
 		if (interactionUse) {
-			
 		}*/
 	}
 	
@@ -160,7 +165,7 @@ class GameplayController {
         
         interactionLoot = environment.checkInteractionsLoot(character.getCharacterView());
         interactionUse = environment.checkInteractionsUse(character.getCharacterView());
-        inCombat = opponents.checkInteractions(character.getCharacterView());
+        inCombat = bandit.checkInteractions(character.getCharacterView());
         interactionActive = interactionLoot || interactionUse;
         
         ui.showEkeyLoot(interactionLoot);
@@ -170,7 +175,7 @@ class GameplayController {
 	}
 	
 	private void combat() {
-		if (!opponents.isFight()) {
+		if (!bandit.isFight()) {
 			inCombat = false;
 			ui.hideCombatUI();
 			moveCharacter(1, 0);
@@ -181,11 +186,16 @@ class GameplayController {
 		}
 			
 		
-		int opponentDamage = opponents.opponentsTurn();
+		int opponentDamage = bandit.opponentsTurn();
 		if (opponentDamage != 0) {
 			isPlayerTurn = true;
 			character.isMyTurn(true);
-			character.changeHpAndCheckIsDead(-opponentDamage);
+			if (!character.changeHpAndCheckIsDead(-opponentDamage)) {
+				ui.showFinalWindow(false);
+				ui.hideCombatUI();
+				timer.stop();
+				character.isMyTurn(false);
+			}
 			ui.changeHp(character.getHp());
 		}
 		else {
@@ -202,7 +212,7 @@ class GameplayController {
  
 		character.relocate(dx, dy);
 		if (environment.checkCanMove(character.getCharacterView())) {
-			opponents.relocate(dx, dy);
+			bandit.relocate(dx, dy);
 			environment.relocate(dx, dy);
 		}
 		
@@ -214,12 +224,20 @@ class GameplayController {
 		if (!inCombat || !isPlayerTurn)
 			return;
 		switch(activeSkill) {
-			case 1: {opponents.attacked(-7);} break;
-			case 2: {opponents.attacked(-10);} break;
-			case 3: {character.heal(15); ui.changeHp(character.getHp()); opponents.isOpponentTurn();} break;
+			case 1: {bandit.attacked(-1);} break;
+			case 2: {bandit.attacked(-7);} break;
+			case 3: {character.heal(15); ui.changeHp(character.getHp()); bandit.isOpponentTurn();} break;
 			default: Platform.exit();
 		}
 		
 		isPlayerTurn = false;
+	}
+	
+	private void showFinalWindow(boolean victoryTrueDeathFalse) {
+		ui.showFinalWindow(victoryTrueDeathFalse);
+	}
+	
+	private void endGame(boolean trueVictoryfalseDeath) {
+		Platform.exit();
 	}
 }

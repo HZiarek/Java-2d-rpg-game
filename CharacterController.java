@@ -65,12 +65,11 @@ class CharacterController {
 		}
 	}
 	
-	public void changeHpAndCheckIsDead(int howManyPoints) {
+	public boolean changeHpAndCheckIsDead(int howManyPoints) {
 		hpChange.setText("" + howManyPoints);
 		hpChange.setColor(Color.RED);
 		animation = true;
-		if (!characterModel.changeHpAndCheckIsDead(howManyPoints))
-			characterView.setVisible(false);
+		return characterModel.changeHpAndCheckIsDead(howManyPoints);
 	}
 	
 	public int getHp() {
