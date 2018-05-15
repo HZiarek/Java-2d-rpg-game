@@ -20,7 +20,7 @@ class TextView {
 		text = new Text(content);
 		text.setFont(Font.font ("Verdana", FontWeight.BOLD, size));
 		text.setFill(color);
-		text.relocate(Xposition - (text.getBoundsInLocal().getWidth()/2),
+		text.relocate(Xposition,// - (text.getBoundsInLocal().getWidth()/2),
 				Yposition - (text.getBoundsInLocal().getHeight()));
 		isVisible = false;
 	}

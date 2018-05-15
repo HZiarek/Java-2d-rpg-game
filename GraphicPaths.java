@@ -10,6 +10,9 @@ class GraphicPaths {
 	private static final String MAIN_MENU_OPTIONS = "/mainMenu/options.png";
 	private static final String MAIN_MENU_HIGHLIGHT = "/mainMenu/highlight.png";
 	
+	//statistics
+	private static final String STATISTICS_BACKGROUND = "/mainMenu/statistics_back.jpg";
+	
 	//environment
 	private static final String MAP = "/backgrounds/map.jpg";
 	
@@ -69,6 +72,9 @@ class GraphicPaths {
         	case "mainMenuBackground":	return FOLDER+MAIN_MENU_BACKGROUND;
         	case "mainMenuOptions":	return FOLDER+MAIN_MENU_OPTIONS;
         	case "mainMenuHighlight":	return FOLDER+MAIN_MENU_HIGHLIGHT;
+        	
+        	//statistics
+        	case "statisticsBackground":	return FOLDER+STATISTICS_BACKGROUND;
 		
 	        case "map":	return FOLDER+MAP;
 	        

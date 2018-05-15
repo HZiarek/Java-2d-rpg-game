@@ -1,5 +1,11 @@
 package application;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
+import Database.DBConnect;
+import Database.GameStatistics;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -17,9 +23,12 @@ class GameplayController {
 	private UIController ui;
 	private int activeSkill;
 	private AnimationTimer timer;
+	private long startTime;
 	
 	private MainMenuView mainMenuView;
 	private int currentOption;
+	
+	private DatabaseController statistics;
     
     boolean goUp, goDown, goRight, goLeft,
     	interactionLoot, interactionUse, interactionActive,
@@ -42,10 +51,10 @@ class GameplayController {
 	
 	private void createLevel() {
 		environment = new EnvironmentController(root);
-		//bandit = new BanditController(root, 700, -760, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
 		bandit = new BanditController(root, 1000, -750, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
 		character = new CharacterController(root);
 		ui = new UIController(root);
+		startTime = System.nanoTime();
 	}
 	
 	public void start() {
@@ -64,7 +73,7 @@ class GameplayController {
 	                case DIGIT2:	{ui.setHighlight(2); activeSkill = 2;} break;
 	                case DIGIT3:	{ui.setHighlight(3); activeSkill = 3;} break;
 	                case ENTER:		useEnterKey(); break;
-	                case ESCAPE:	Platform.exit(); break;
+	                case ESCAPE:	endGame(); break;
 	            }
 	        }
 	    });
@@ -126,11 +135,21 @@ class GameplayController {
 	}
 	
 	private void chooseOptionInMainMenu() {
+		if (statistics != null) {
+			statistics.hideWindow();
+			statistics = null;
+			return;
+		}
+		
 		switch (currentOption) {
 			case 0: startNewGame(); break;
-			case 1: break;
+			case 1: showStatistics(); break;
 			case 2: Platform.exit(); break;
 		}
+	}
+	
+	private void showStatistics() {
+		statistics = new DatabaseController(root);
 	}
 	
 	private void startNewGame() {
@@ -237,7 +256,37 @@ class GameplayController {
 		ui.showFinalWindow(victoryTrueDeathFalse);
 	}
 	
-	private void endGame(boolean trueVictoryfalseDeath) {
+	private void endGame() {
+		if (environment != null) {
+			addStatistic();
+		}
 		Platform.exit();
+	}
+	
+	private void addStatistic() {
+		DBConnect databaseConnection = new DBConnect();
+		GameStatistics newRow = new GameStatistics();
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		LocalDate localDate = LocalDate.now();
+		
+		newRow.setDateOfPlaying(dtf.format(localDate));
+		
+		long elapsedTime = System.nanoTime() - startTime;
+		elapsedTime = elapsedTime/100000000;
+		double insertedTime = elapsedTime;
+		newRow.setTimeOfPlaying(elapsedTime/10);
+		
+		newRow.setMoney(character.getMoney());
+		
+		if (character.getMoney() == 500)
+			newRow.setFinalResult("victory");
+		else
+			if (character.getHp() == 0)
+			newRow.setFinalResult("death");
+			else
+				newRow.setFinalResult("quit");
+		
+		databaseConnection.addNewRow(newRow);
 	}
 }
