@@ -23,9 +23,9 @@ class EnvironmentController {
 		
 		environment.relocate(-1100, -2000);
 		
-		chestNr1 = new ChestController(environment, 2800, 1100, 300, 300, true, 1, 100);
-		chestNr2 = new ChestController(environment, 2700, 1100, 300, 300, true, 2, 100);
-		chestNr3 = new ChestController(environment, 2150, 2600, 300, 300, true, 1, 300);
+		chestNr1 = new ChestController(environment, 2800, 1150, 300, 300, true, 1, 100);
+		chestNr2 = new ChestController(environment, 2700, 1150, 300, 300, true, 2, 100);
+		chestNr3 = new ChestController(environment, 2150, 2650, 300, 300, true, 1, 300);
 		
 		boudaries = new StopperController(environment);
     }

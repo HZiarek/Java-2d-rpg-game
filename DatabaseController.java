@@ -58,34 +58,34 @@ class DatabaseController {
 		finalResultText = new TextView[10];
 		statisticsRows = databaseConnect.getAllRows();
 		
-		int verticalDistance = 400;
+		int verticalDistance = 290;
 		numberOfRows = statisticsRows.size();
 		for (int i = 0; i < 10 && i < numberOfRows; i++) {
-			idText[i] = new TextView(""+statisticsRows.get(i).getIdStat(), statisticsGroup,
-					100, verticalDistance, 60, Color.WHITE);
+			idText[i] = new TextView(""+(i + 1), statisticsGroup,
+					20, verticalDistance, 50, Color.WHITE);
 			idText[i].setVisible(true);
 			
-			dateOfPlayingText[i] = new TextView(""+statisticsRows.get(i).getDateOfPlaying(), statisticsGroup,
-					200, verticalDistance, 60, Color.WHITE);
+			dateOfPlayingText[i] = new TextView(""+statisticsRows.get(numberOfRows - 1 - i).getDateOfPlaying(),
+					statisticsGroup, 110, verticalDistance, 50, Color.WHITE);
 			dateOfPlayingText[i].setVisible(true);
 			
 			DecimalFormat df=new java.text.DecimalFormat();
 			df.setMaximumFractionDigits(2);
 			df.setMinimumFractionDigits(2);
-			timeOfPlayingText[i] = new TextView(""+statisticsRows.get(i).getTimeOfPlaying()+" s",
-					statisticsGroup, 700, verticalDistance, 60, Color.WHITE);
+			timeOfPlayingText[i] = new TextView(""+statisticsRows.get(numberOfRows - 1 - i).getTimeOfPlaying()+" s",
+					statisticsGroup, 600, verticalDistance, 50, Color.WHITE);
 			timeOfPlayingText[i].setVisible(true);
 			
-			moneyText[i] = new TextView(""+statisticsRows.get(i).getMoney(), statisticsGroup,
-					1200, verticalDistance, 60, Color.WHITE);
+			moneyText[i] = new TextView(""+statisticsRows.get(numberOfRows - 1 - i).getMoney(), statisticsGroup,
+					1150, verticalDistance, 50, Color.WHITE);
 			moneyText[i].setVisible(true);
 			
-			finalResultText[i] = new TextView(""+statisticsRows.get(i).getFinalResult(), statisticsGroup,
-					1500, verticalDistance, 60, Color.WHITE);
+			finalResultText[i] = new TextView(""+statisticsRows.get(numberOfRows - 1 - i).getFinalResult(), statisticsGroup,
+					1530, verticalDistance, 50, Color.WHITE);
 			finalResultText[i].setVisible(true);
 			
 			
-			verticalDistance +=100;
+			verticalDistance +=78;
 			
 		}
 	}

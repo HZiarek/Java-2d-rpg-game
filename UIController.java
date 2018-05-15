@@ -23,16 +23,16 @@ class UIController {
 		
 		eKeyLootView = new View (paths.getPath("eKeyLoot"), ui, 1680, 950);
 		eKeyUseView = new View (paths.getPath("eKeyUse"), ui, 1680, 950);
-		finalWindowView = new View(paths.getPath("finalWindow"), ui, 960, 900);
+		finalWindowView = new View(paths.getPath("finalWindow"), ui, 960, 1020);
 		finalWindowView.setVisible(false);
 		
-		victoryText = new TextView("MISSON PASSED", ui, 960, 600, 150, Color.GREEN);
-		deathText = new TextView("YOU ARE DEAD", ui, 960, 600, 150, Color.RED);
+		victoryText = new TextView("MISSON PASSED", ui, 210, 600, 150, Color.GREEN);
+		deathText = new TextView("YOU ARE DEAD", ui, 270, 600, 150, Color.RED);
 		
-		goldText = new TextView("Gold: " + 0, ui, 1600, 80, 50, Color.GOLDENROD);
+		goldText = new TextView("Gold: " + 0, ui, 1550, 80, 50, Color.GOLDENROD);
 		goldText.setVisible(true);
 		
-		mainTaskText = new TextView("Find 500 gold", ui, 150, 880, 30, Color.BISQUE);
+		mainTaskText = new TextView("Find 500 gold", ui, 50, 880, 30, Color.BISQUE);
 		mainTaskText.setVisible(true);
 		
 		skillNr1 = new SkillView (paths.getPath("skillAttack"), paths.getPath("skillHightlight"),
