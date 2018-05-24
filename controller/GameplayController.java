@@ -14,6 +14,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import view.*;
 
+/**
+ * Main controller; it creates scene, main JavaFX group and manage them.
+ * It provides communication between others controllers and with the player.
+ */
 
 public class GameplayController {
 	private Scene myScene;
@@ -70,11 +74,11 @@ public class GameplayController {
 	                case LEFT:  goLeft  = true; break;
 	                case RIGHT: goRight  = true; break;
 	                case E:		if (interactionActive) serviceInteraction(); break;
-	                case DIGIT1:	{ui.setHighlight(1); activeSkill = 1;} break;
-	                case DIGIT2:	{ui.setHighlight(2); activeSkill = 2;} break;
-	                case DIGIT3:	{ui.setHighlight(3); activeSkill = 3;} break;
-	                case ENTER:		useEnterKey(); break;
-	                case ESCAPE:	endGame(); break;
+	                case DIGIT1: if (inCombat) {ui.setHighlight(1); activeSkill = 1;} break;
+	                case DIGIT2: if (inCombat) {ui.setHighlight(2); activeSkill = 2;} break;
+	                case DIGIT3: if (inCombat) {ui.setHighlight(3); activeSkill = 3;} break;
+	                case ENTER:	 useEnterKey(); break;
+	                case ESCAPE: endGame(); break;
 	            }
 	        }
 	    });
@@ -99,7 +103,7 @@ public class GameplayController {
             	}
             	else {
             		bandit.animation();
-            		character.hpMovingAnimation();
+            		character.animation();
             		if (!inCombat)
             			exploration();
             		else {
@@ -244,8 +248,8 @@ public class GameplayController {
 		if (!inCombat || !isPlayerTurn)
 			return;
 		switch(activeSkill) {
-			case 1: {bandit.attacked(-1);} break;
-			case 2: {bandit.attacked(-7);} break;
+			case 1: {bandit.attacked(-1); character.isAttacking();} break;
+			case 2: {bandit.attacked(-7); character.isAttacking();} break;
 			case 3: {character.heal(15); ui.changeHp(character.getHp()); bandit.isOpponentTurn();} break;
 			default: Platform.exit();
 		}

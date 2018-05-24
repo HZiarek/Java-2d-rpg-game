@@ -4,13 +4,19 @@ import javafx.scene.Group;
 import view.*;
 import model.*;
 
+/**
+ * It provides management and control of the environment (only without enemy);
+ * contains special controllers for chests and boundaries. Everything what might be displayed on the screen
+ * is added to separate JavaFX group called the "environmentGroup".
+ */
+
 class EnvironmentController {
-    private Group root, environment;
-    private MapView mapView;
+    private Group root, environmentGroup;
+    private MapSprite mapView;
 	private ChestController chestNr1, chestNr2, chestNr3;
 	int nrChestInteraction;
 	
-	//testowanie granic mapy
+	//boundaries testing
 	private StopperController boudaries;
     
     public EnvironmentController(Group hook) {
@@ -18,29 +24,29 @@ class EnvironmentController {
     	nrChestInteraction = 0;
     	GraphicPaths paths = new GraphicPaths();
     	
-    	environment = new Group ();
-		root.getChildren().add(environment);
+    	environmentGroup = new Group ();
+		root.getChildren().add(environmentGroup);
 		
-		mapView = new MapView(paths.getPath("map"), environment);
+		mapView = new MapSprite(paths.getPath("map"), environmentGroup);
 		
-		environment.relocate(-1100, -2000);
+		environmentGroup.relocate(-1100, -2000);
 		
-		chestNr1 = new ChestController(environment, 2800, 1150, 300, 300, true, 1, 100);
-		chestNr2 = new ChestController(environment, 2700, 1150, 300, 300, true, 2, 100);
-		chestNr3 = new ChestController(environment, 2150, 2650, 300, 300, true, 1, 300);
+		chestNr1 = new ChestController(environmentGroup, 2800, 1150, 300, 300, true, 1, 100);
+		chestNr2 = new ChestController(environmentGroup, 2700, 1150, 300, 300, true, 2, 100);
+		chestNr3 = new ChestController(environmentGroup, 2150, 2650, 300, 300, true, 1, 300);
 		
-		boudaries = new StopperController(environment);
+		boudaries = new StopperController(environmentGroup);
     }
     
-    public boolean checkCanMove(FourPerspectiveView heroView) {
+    public boolean checkCanMove(FourPerspectiveSprite heroView) {
     	return boudaries.checkCanMove(heroView);
     }
     
     public void relocate(double dx, double dy) {
-    	environment.relocate(environment.getLayoutX() - dx, environment.getLayoutY() - dy);
+    	environmentGroup.relocate(environmentGroup.getLayoutX() - dx, environmentGroup.getLayoutY() - dy);
     }
     
-    public boolean checkInteractionsLoot(FourPerspectiveView heroView){
+    public boolean checkInteractionsLoot(FourPerspectiveSprite heroView){
     	if (chestNr1.checkInteraction(heroView)) {
     		nrChestInteraction = 1; return true;
     	}
@@ -53,7 +59,7 @@ class EnvironmentController {
     	return false;
     }
     
-    public boolean checkInteractionsUse(FourPerspectiveView heroView){
+    public boolean checkInteractionsUse(FourPerspectiveSprite heroView){
     	//option to do
     	return false;
     }
@@ -71,24 +77,24 @@ class EnvironmentController {
 
 class ChestController{
 	private Chest chestModel;
-	private ChestView chestView;
+	private ChestSprite chestView;
 	
 	public ChestController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			boolean active, int type, int value) {
 		chestModel = new Chest(xposition, yposition, xsize, ysize, active, type, value);
 		GraphicPaths paths = new GraphicPaths();
 		switch (type) {
-			case 1: chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"), 
+			case 1: chestView = new ChestSprite (paths.getPath("chest"), paths.getPath("chestOpen"), 
 					hook, xposition, yposition, xsize, ysize); break;
-			case 2: chestView = new ChestView (paths.getPath("barrel"), paths.getPath("barrelOpen"),
+			case 2: chestView = new ChestSprite (paths.getPath("barrel"), paths.getPath("barrelOpen"),
 					hook, xposition, yposition, xsize, ysize); break;
-			default:  chestView = new ChestView (paths.getPath("chest"), paths.getPath("chestOpen"),
+			default:  chestView = new ChestSprite (paths.getPath("chest"), paths.getPath("chestOpen"),
 					hook, xposition, yposition, xsize, ysize); break;
 		}
 		chestView.setVisible(true);
 	}
 	
-	public boolean checkInteraction (FourPerspectiveView heroView) {
+	public boolean checkInteraction (FourPerspectiveSprite heroView) {
 		if (!chestModel.getActive())
 			return false;
 		return chestView.intersects(heroView);
@@ -105,38 +111,37 @@ class ChestController{
 	}
 }
 
-//testowanie granic mapy
 class StopperController{
-	private View upMain, downMain, leftMain, rightMain, forestTop, forChest1, forChest2, forChest3;
+	private Sprite upMain, downMain, leftMain, rightMain, forestTop, forChest1, forChest2, forChest3;
 	
 	public StopperController(Group hook) {
 		GraphicPaths paths = new GraphicPaths();
-		upMain = new View(paths.getPath("stopperMainHorizontal"), hook, 2000, 1000);
+		upMain = new Sprite(paths.getPath("stopperMainHorizontal"), hook, 2000, 1000);
 		//upMain.setVisible(true);
 		
-		downMain = new View(paths.getPath("stopperMainHorizontal"), hook, 2000, 4000);
+		downMain = new Sprite(paths.getPath("stopperMainHorizontal"), hook, 2000, 4000);
 		//downMain.setVisible(true);
 		
-		leftMain = new View(paths.getPath("stopperMainVertical"), hook, 500, 4000);
+		leftMain = new Sprite(paths.getPath("stopperMainVertical"), hook, 500, 4000);
 		//leftMain.setVisible(true);
 		
-		rightMain = new View(paths.getPath("stopperMainVertical"), hook, 3500, 4000);
+		rightMain = new Sprite(paths.getPath("stopperMainVertical"), hook, 3500, 4000);
 		//rightMain.setVisible(true);
 		
-		forestTop = new View(paths.getPath("stopperForestTop"), hook, 2150, 1930);
+		forestTop = new Sprite(paths.getPath("stopperForestTop"), hook, 2150, 1930);
 		//forestTop.setVisible(true);
 		
-		forChest1 = new View(paths.getPath("stopperChest"), hook, 2800, 1100);
+		forChest1 = new Sprite(paths.getPath("stopperChest"), hook, 2800, 1100);
 		//forChest1.setVisible(true);
 		
-		forChest2 = new View(paths.getPath("stopperChest"), hook, 2700, 1100);
+		forChest2 = new Sprite(paths.getPath("stopperChest"), hook, 2700, 1100);
 		//forChest2.setVisible(true);
 		
-		forChest3 = new View(paths.getPath("stopperChest"), hook, 2150, 2600);
+		forChest3 = new Sprite(paths.getPath("stopperChest"), hook, 2150, 2600);
 		//forChest3.setVisible(true);
 	}
 	
-	public boolean checkCanMove (FourPerspectiveView heroView) {
+	public boolean checkCanMove (FourPerspectiveSprite heroView) {
 		return !(upMain.intersects(heroView)
 				|| downMain.intersects(heroView)
 				|| leftMain.intersects(heroView)

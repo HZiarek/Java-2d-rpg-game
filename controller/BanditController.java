@@ -1,83 +1,54 @@
 package controller;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import view.*;
 import model.*;
 
+/**
+ * It provides management and control of the enemy (model and view) with all additions: health points strip,
+ * arrow showing whose turn, text informing about change of health points and attack animation.
+ * Everything what might be displayed on the screen is added to separate JavaFX group called the "banditGroup".
+ */
+
 class BanditController {
-	private Group banditGroup;
 	private Creature banditModel;
-	private FourPerspectiveView banditView;
-	private HpController hp;
-	private View turnPointer;
-	private TextView hpChange;
-	private boolean animation;
-	private int animationFrameCounter;
+	private BanditView banditView;
     
     private int pseudoTimeCounter;
 
-    
     public BanditController(Group hook, double xposition, double yposition, double xsize, double ysize,
 			int hp, int maxHp, int dmg, int def) {
-    	banditGroup = new Group();
-    	hook.getChildren().add(banditGroup);
     	
     	pseudoTimeCounter = 0;
-    	
-    	animation = false;
-		animationFrameCounter = 0;
-		
-		GraphicPaths paths = new GraphicPaths();
-		banditView = new FourPerspectiveView (paths.getPath("banditFloor"),
-    			paths.getPath("banditFront"),
-    			paths.getPath("banditRight"),
-    			paths.getPath("banditLeft"),
-    			paths.getPath("banditBack"),
-    			banditGroup, xposition, yposition, xsize, ysize);
+		banditView = new BanditView(hook, xposition, yposition, hp);
 		banditModel = new Creature(xposition, yposition, xsize, ysize, hp, maxHp, dmg);
 		banditView.setVisible(true);
-		this.hp = new HpController (banditGroup, paths.getPath("banditHpStripe"), paths.getPath("banditPieceOfHp"),
-				hp, xposition - 20, yposition + 70, 10);
-		turnPointer = new View(paths.getPath("turnPointer"), banditGroup, xposition - 40, yposition - 300);
-		hpChange = new TextView("", banditGroup, xposition + 40, yposition - 250, 50, Color.RED);
-		hpChange.setVisible(true);
-		
-    	
-    	//bandit = new BaController(opponents, 700, -760, 300, 300, 20, 20, 10, 1);//x, y, xsize ysize hp maxHp dmg def
     }
 	
     public void relocate(double dx, double dy) {
-    	//banditGroup.relocate(banditGroup.getLayoutX() + dx, banditGroup.getLayoutY() + dy);
-    	banditGroup.setLayoutX(banditGroup.getLayoutX() - dx);
-    	banditGroup.setLayoutY(banditGroup.getLayoutY() - dy);
+    	banditView.relocate(dx, dy);
     }
     
-    public boolean checkInteractions(FourPerspectiveView heroView){
+    public boolean checkInteractions(FourPerspectiveSprite heroView){
     	if (!banditModel.getAlive())
 			return false;
 
     	if (banditView.intersects(heroView)) {
     		banditModel.setInFight(true);
-    		hp.setVisible(true);
-    		turnPointer.setVisible(true);
+    		banditView.setVisible(true);
+    		banditView.turnPointerSetVisible(true);
     		return true;
     	}
     	return false;
     }
     
-//    public int checkFight() {
-//    	return nrOpponentInteraction;
-//    }
-    
     public void attacked(int howManyPoints) {
     	if (changeHpAndCheckIsDead(howManyPoints))
     		banditModel.setInFight(false);
     	else
-    		turnPointer.setVisible(true);
+    		banditView.turnPointerSetVisible(true);
     }
     
-	
 	public boolean isFight() {
 		return banditModel.getInFight();
 	}
@@ -87,44 +58,34 @@ class BanditController {
 		if (pseudoTimeCounter < 120)
 			return 0;
 		
-		turnPointer.setVisible(false);
+		banditView.turnPointerSetVisible(false);
 		pseudoTimeCounter = 0;
+		banditView.attackAnimationReady();
 		return banditModel.getDamage();
 	}
 	
-	public void animation() {
-		hpMovingAnimation();
-	}
-	
 	public void isOpponentTurn() {
-		turnPointer.setVisible(true);
+		banditView.turnPointerSetVisible(true);
 	}
 	
-	private void hpMovingAnimation() {
-		if (!animation)
-			return;
-		
-		hpChange.relocate(0, -1);
-		animationFrameCounter++;
-		if (animationFrameCounter == 50) {
-			animation = false;
-			animationFrameCounter = 0;
-			hpChange.setText("");
-			hpChange.relocate(0, 51);
-		}
+	public void animation() {
+		banditView.animation();
 	}
 	
 	private boolean changeHpAndCheckIsDead(int howManyPoints) {
-		hpChange.setText("" + howManyPoints);
-		animation = true;
+		banditView.getDamageAnimationReady(howManyPoints);
 		if (!banditModel.changeHpAndCheckIsDead(howManyPoints)) {
 			banditView.setVisible(false);
-			hp.setVisible(false);
-			turnPointer.setVisible(false);
+			banditView.setVisible(false);
+			banditView.turnPointerSetVisible(true);
 			return true;
 		}
 		
-		hp.changeHp(banditModel.getHp());
+		banditView.changeHp(banditModel.getHp());
 		return false;
+	}
+	
+	public void showHpStripe(boolean yesOrNo) {
+		banditView.showHpStripe(yesOrNo);
 	}
 }

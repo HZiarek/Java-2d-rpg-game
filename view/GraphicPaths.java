@@ -1,9 +1,14 @@
 package view;
 
+/**
+ * Allows to collect all graphic paths in one place
+ */
+
 public class GraphicPaths {
 	private String FOLDER;
 	private static final String TEMPORARY = "file:graphic/temporary/";
-	private static final String FINAL = "file:graphic/isometric/";
+	private static final String FINAL = "file:D:\\Users\\USER\\java-game\\Game_v0.1/graphic/isometric/";
+	//private static final String FINAL = "file:graphic/isometric/";
 	
 	//main menu
 	private static final String MAIN_MENU_BACKGROUND = "/mainMenu/background.jpg";
@@ -27,6 +32,7 @@ public class GraphicPaths {
 	private static final String HERO_LEFT = "character/character_left.png";
 	private static final String HERO_BACK = "character/character_back.png";
 	private static final String HERO_FLOOR = "character/character_floor.png";
+	private static final String HERO_ANIMATION = "character/animation/";
 	
 	//bandit
 	private static final String BANDIT_FRONT = "opponents/bandit_front.png";
@@ -36,6 +42,7 @@ public class GraphicPaths {
 	private static final String BANDIT_FLOOR = "opponents/bandit_floor.png";
 	private static final String BANDIT_PIECE_OF_HP = "UI/bandit_piece_of_hp.jpg";
 	private static final String BANDIT_HP_STRIPE = "UI/bandit_hp_stripe.jpg";
+	private static final String BANDIT_ANIMATION = "opponents/animation/";
 	
 	//skills
 	private static final String SKILL_ATTACK = "UI/attack_skill.jpg";
@@ -89,6 +96,7 @@ public class GraphicPaths {
 	        case "characterRight":	return FOLDER+HERO_RIGHT;
 	        case "characterBack":	return FOLDER+HERO_BACK;
 	        case "characterFloor":	return FOLDER+HERO_FLOOR;
+	        case "characterAnimation":	return FOLDER+HERO_ANIMATION;
 	        
 	        //opponent
 	        case "banditFront":	return FOLDER+BANDIT_FRONT;
@@ -98,6 +106,7 @@ public class GraphicPaths {
 	        case "banditFloor":	return FOLDER+BANDIT_FLOOR;
 	        case "banditPieceOfHp":	return FOLDER+BANDIT_PIECE_OF_HP;
 	        case "banditHpStripe":	return FOLDER+BANDIT_HP_STRIPE;
+	        case "banditAnimation":	return FOLDER+BANDIT_ANIMATION;
 	        
 	        //skills
 	        case "skillAttack":	return FOLDER+SKILL_ATTACK;

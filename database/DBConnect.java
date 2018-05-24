@@ -30,7 +30,7 @@ public class DBConnect {
 	}
 	
 	public void addNewRow(GameStatistics example) {
-		boolean result = DBManager.run(new Task<Boolean>() {
+		/*boolean result = */DBManager.run(new Task<Boolean>() {
 			public Boolean execute(PreparedStatement ps) throws Exception {
 				ps.setString(1, example.getDateOfPlaying());
 				ps.setDouble(2, example.getTimeOfPlaying());
@@ -40,7 +40,7 @@ public class DBConnect {
 			}
 		}, "insert into gamestatistics values (game_seq.nextval, ?, ?, ?, ?)");
 		
-		System.out.println(result ? "Udalo sie" : "Nie udalo sie");
+		//System.out.println(result ? "Udalo sie" : "Nie udalo sie");
 	}
 }
 
