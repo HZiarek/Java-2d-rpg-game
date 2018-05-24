@@ -169,6 +169,7 @@ public class GameplayController {
 			ui.updateGold(character.getMoney());
 			if (character.getMoney() == 500) {
 				showFinalWindow(true);
+				//character.setVisible(false);
 				timer.stop();
 			}
 		}
@@ -209,7 +210,6 @@ public class GameplayController {
 			return;
 		}
 			
-		
 		int opponentDamage = bandit.opponentsTurn();
 		if (opponentDamage != 0) {
 			isPlayerTurn = true;
@@ -217,8 +217,9 @@ public class GameplayController {
 			if (!character.changeHpAndCheckIsDead(-opponentDamage)) {
 				ui.showFinalWindow(false);
 				ui.hideCombatUI();
+				character.setVisible(false);
 				timer.stop();
-				character.isMyTurn(false);
+				//character.isMyTurn(false);
 			}
 			ui.changeHp(character.getHp());
 		}
@@ -258,6 +259,7 @@ public class GameplayController {
 	}
 	
 	private void showFinalWindow(boolean victoryTrueDeathFalse) {
+		character.setVisible(false);
 		ui.showFinalWindow(victoryTrueDeathFalse);
 	}
 	

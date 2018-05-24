@@ -33,17 +33,17 @@ public class BanditView {
     			paths.getPath("banditLeft"),
     			paths.getPath("banditBack"),
     			banditGroup, xposition, yposition);
-    	turnPointer = new Sprite(paths.getPath("turnPointer"), banditGroup, xposition - 40, yposition - 300);
-    	hpChange = new TextSprite("", banditGroup, xposition + 40, yposition - 250, 50, Color.RED);
+    	turnPointer = new Sprite(paths.getPath("turnPointer"), banditGroup, xposition + 30, yposition - 240);
+    	hpChange = new TextSprite("", banditGroup, xposition + 60, yposition - 270, 50, Color.RED);
 		animationAttackFrameCounter = 0;
 		animationHpChangeFrameCounter = 0;
 		
 		attackAnimation = new AnimationSprite(paths.getPath("banditAnimation")+"attack_",
-				banditGroup, xposition, yposition, 19);
+				banditGroup, xposition, yposition, 18);
 		
 		this.hp = new HpController(banditGroup, paths.getPath("banditHpStripe"), paths.getPath("banditPieceOfHp"),
-				hp, xposition - 20, yposition + 70, 10);
-		this.hp.setVisible(true);
+				hp, xposition + 30, yposition + 70, 10);
+		//this.hp.setVisible(true);
 	}
 	
     public void relocate(double dx, double dy) {
@@ -55,8 +55,14 @@ public class BanditView {
     	return banditSprite.intersects(heroView);
     }
 	
+	public void setVisibleBody(boolean onOrOff) {
+		banditSprite.setVisible(onOrOff);
+	}
+	
 	public void setVisible(boolean onOrOff) {
 		banditSprite.setVisible(onOrOff);
+		hp.setVisible(onOrOff);
+		turnPointer.setVisible(onOrOff);
 	}
 	
 	public void updateView(double dx, double dy) {
@@ -77,11 +83,11 @@ public class BanditView {
 		turnPointer.setVisible(isIt);
 	}
 	
-	public void animation() {
+	public void animation(boolean isAlive) {
 		if (hpChange.getIsVisible())
 			hpChangeAnimation();
 		if (attackAnimation.getIsVisible())
-			attackAnimation();
+			attackAnimation(isAlive);
 	}
 	
 	private void hpChangeAnimation(){
@@ -98,17 +104,20 @@ public class BanditView {
 		}
 	}
 	
-	private void attackAnimation() {
+	private void attackAnimation(boolean isAlive) {
 		attackAnimation.animate(animationAttackFrameCounter/2);
 		animationAttackFrameCounter++;
-		if (animationAttackFrameCounter == 38) {
+		if (animationAttackFrameCounter == 36) {
 			attackAnimation.setVisible(false);
+			if (isAlive)
+				banditSprite.setVisible(true);
 			animationAttackFrameCounter = 0;
 		}
 	}
 	
 	public void attackAnimationReady() {
 		attackAnimation.setVisible(true);
+		banditSprite.setVisible(false);
 	}
 	
 	public void showHpStripe(boolean yesOrNo) {

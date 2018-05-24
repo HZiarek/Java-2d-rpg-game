@@ -22,7 +22,7 @@ class BanditController {
     	pseudoTimeCounter = 0;
 		banditView = new BanditView(hook, xposition, yposition, hp);
 		banditModel = new Creature(xposition, yposition, xsize, ysize, hp, maxHp, dmg);
-		banditView.setVisible(true);
+		banditView.setVisibleBody(true);
     }
 	
     public void relocate(double dx, double dy) {
@@ -36,7 +36,6 @@ class BanditController {
     	if (banditView.intersects(heroView)) {
     		banditModel.setInFight(true);
     		banditView.setVisible(true);
-    		banditView.turnPointerSetVisible(true);
     		return true;
     	}
     	return false;
@@ -69,15 +68,13 @@ class BanditController {
 	}
 	
 	public void animation() {
-		banditView.animation();
+		banditView.animation(banditModel.getAlive());
 	}
 	
 	private boolean changeHpAndCheckIsDead(int howManyPoints) {
 		banditView.getDamageAnimationReady(howManyPoints);
 		if (!banditModel.changeHpAndCheckIsDead(howManyPoints)) {
 			banditView.setVisible(false);
-			banditView.setVisible(false);
-			banditView.turnPointerSetVisible(true);
 			return true;
 		}
 		

@@ -12,8 +12,12 @@ public class CharacterView {
 	private int animationHpChangeFrameCounter;
 	private AnimationSprite attackAnimation;
 	private AnimationSprite healAnimation;
+	private Group characterGroup;
 
 	public CharacterView(Group hook) {
+		characterGroup = new Group();
+    	hook.getChildren().add(characterGroup);
+		
 		GraphicPaths paths = new GraphicPaths();
     	characterSprite = new FourPerspectiveSprite (paths.getPath("characterFloor"),
     			paths.getPath("characterFront"),
@@ -21,14 +25,14 @@ public class CharacterView {
     			paths.getPath("characterLeft"),
     			paths.getPath("characterBack"),
     			hook, 960, 690);
-		turnPointer = new Sprite(paths.getPath("turnPointer"), hook, 920, 450);
-		hpChange = new TextSprite("", hook, 900, 400, 50, Color.RED);
+		turnPointer = new Sprite(paths.getPath("turnPointer"), characterGroup, 920, 450);
+		hpChange = new TextSprite("", characterGroup, 900, 400, 50, Color.RED);
 		animationAttackFrameCounter = 0;
 		animationHealFrameCounter = 0;
 		animationHpChangeFrameCounter = 0;
 		
-		attackAnimation = new AnimationSprite(paths.getPath("characterAnimation")+"attack_", hook, 960, 690, 19);
-		healAnimation = new AnimationSprite(paths.getPath("characterAnimation")+"heal_", hook, 950, 670, 11);
+		attackAnimation = new AnimationSprite(paths.getPath("characterAnimation")+"attack_", characterGroup, 960, 690, 18);
+		healAnimation = new AnimationSprite(paths.getPath("characterAnimation")+"heal_", characterGroup, 930, 670, 11);
 	}
 	
 	public void setVisible(boolean onOrOff) {
@@ -99,13 +103,15 @@ public class CharacterView {
 	private void attackAnimation() {
 		attackAnimation.animate(animationAttackFrameCounter/2);
 		animationAttackFrameCounter++;
-		if (animationAttackFrameCounter == 38) {
+		if (animationAttackFrameCounter == 36) {
 			attackAnimation.setVisible(false);
+			characterSprite.setVisible(true);
 			animationAttackFrameCounter = 0;
 		}
 	}
 	
 	public void attackAnimationReady() {
 		attackAnimation.setVisible(true);
+		characterSprite.setVisible(false);
 	}
 }
