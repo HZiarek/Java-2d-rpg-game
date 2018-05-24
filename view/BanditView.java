@@ -4,6 +4,13 @@ import controller.HpController;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+/**
+ * It provides view for opponent (bandit). Consists of Sprite objects.
+ * Uses HpController to manage of health points stripe.
+ * 
+ *
+ */
+
 public class BanditView {
 	private FourPerspectiveSprite banditSprite;
 	private Sprite turnPointer;
