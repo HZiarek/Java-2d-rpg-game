@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import view.*;
 
 /**
- * It provides management and control of the user interface (UI), which are visible during the core gameplay.
+ * It provides management and control of the user interface (UI), which are visible during the core game play.
  * UI consists of: health points strip, information about task, information about amount of gold, image
  * prompting pressing the fitting button and final window, which is shown when the the game is over.
  * Everything what might be displayed on the screen is added to separate JavaFX group called the "uiGroup".
