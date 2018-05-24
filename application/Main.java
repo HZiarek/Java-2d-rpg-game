@@ -5,13 +5,13 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
-* The simple game like mini-rpg. Player cans move, interact with items (chests, it allows to collect money)
+* The simple game. Player cans move, interact with items (chests, it allows to collect money)
 * and fight in turn based combat system.
 * Game uses JavaFX.
 *
 * @author  Hubert Ziarek
 * @version 1.0
-* @since   2018-05-20
+* @since   2018-05-24
 */
 
 public class Main extends Application {
