@@ -3,6 +3,13 @@ package controller;
 import javafx.scene.Group;
 import view.Sprite;
 
+/**
+ * It provides management and control of the health points stripe.
+ * Public methods:
+ *  - changeHp(newHp) - allows to change size of red stripe representing number of character's health points;
+ *  - setVisible (boolean) - allows to show or hide stripe.
+ */
+
 public class HpController {
 	private Sprite hp[], stripeView;
 	private Group hpGroup;
