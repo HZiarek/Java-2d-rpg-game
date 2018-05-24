@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * It extends class Model by adding new parameter active.
+ * Describes elements of environment which have interaction option.
+ */
+
 public 
 class Item extends Model {
 	private boolean active;

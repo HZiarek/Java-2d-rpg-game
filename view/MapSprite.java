@@ -6,12 +6,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public 
-class MapView {
+class MapSprite {
     private Pane backgroundLayer;
 	private Image backgroundImage;
 	private ImageView backgroundView;
 	
-    public MapView(String graphicPath, Group hook) {
+    public MapSprite(String graphicPath, Group hook) {
     	GraphicPaths paths = new GraphicPaths();
     	backgroundImage = new Image(paths.getPath("map"));
     	backgroundView = new ImageView (backgroundImage);

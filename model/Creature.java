@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * It extends Model; describes base logic of the creatures (enemy and character).
+ * It adds parameters required to define entities as an alive creature, which is able to take part in combat.
+ */
+
 public class Creature extends Model {
 	private boolean alive;
 	private boolean inFight;

@@ -4,43 +4,50 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import view.*;
 
+/**
+ * It provides management and control of the user interface (UI), which are visible during the core gameplay.
+ * UI consists of: health points strip, information about task, information about amount of gold, image
+ * prompting pressing the fitting button and final window, which is shown when the the game is over.
+ * Everything what might be displayed on the screen is added to separate JavaFX group called the "uiGroup".
+ */
+
 class UIController {
-	private Group root, ui;
+	private Group root, uiGroup;
 	
-	private View eKeyLootView, eKeyUseView, finalWindowView;
-    private SkillView skillNr1, skillNr2, skillNr3;
+	private Sprite eKeyLootView, eKeyUseView, finalWindowView;
+    private SkillSprite skillNr1, skillNr2, skillNr3;
     
-    private TextView goldText, mainTaskText, victoryText, deathText;
+    private TextSprite goldText, mainTaskText, victoryText, deathText;
 
 	private HpController hp;
 
     
 	public UIController(Group hook) {
 		root = hook;
-		ui = new Group();
-		root.getChildren().add(ui);
+		uiGroup = new Group();
+		root.getChildren().add(uiGroup);
 
 		GraphicPaths paths = new GraphicPaths();
 		
-		eKeyLootView = new View (paths.getPath("eKeyLoot"), ui, 1680, 950);
-		eKeyUseView = new View (paths.getPath("eKeyUse"), ui, 1680, 950);
-		finalWindowView = new View(paths.getPath("finalWindow"), ui, 960, 1020);
+		eKeyLootView = new Sprite (paths.getPath("eKeyLoot"), uiGroup, 1680, 950);
+		eKeyUseView = new Sprite (paths.getPath("eKeyUse"), uiGroup, 1680, 950);
+		finalWindowView = new Sprite(paths.getPath("finalWindow"), uiGroup, 960, 1020);
 		finalWindowView.setVisible(false);
 		
-		victoryText = new TextView("MISSON PASSED", ui, 210, 600, 150, Color.GREEN);
-		deathText = new TextView("YOU ARE DEAD", ui, 270, 600, 150, Color.RED);
+		victoryText = new TextSprite("MISSON PASSED", uiGroup, 210, 600, 150, Color.GREEN);
+		deathText = new TextSprite("YOU ARE DEAD", uiGroup, 270, 600, 150, Color.RED);
 		
-		goldText = new TextView("Gold: " + 0, ui, 1550, 80, 50, Color.GOLDENROD);
+		goldText = new TextSprite("Gold: " + 0, uiGroup, 1550, 80, 50, Color.GOLDENROD);
 		goldText.setVisible(true);
 		
-		mainTaskText = new TextView("Find 500 gold", ui, 50, 880, 30, Color.BISQUE);
+		mainTaskText = new TextSprite("Find 500 gold", uiGroup, 50, 880, 30, Color.BISQUE);
 		mainTaskText.setVisible(true);
 		
-		skillNr1 = new SkillView (paths.getPath("skillAttack"), paths.getPath("skillHightlight"),
+		skillNr1 = new SkillSprite (paths.getPath("skillAttack"), paths.getPath("skillHightlight"),
 				root, 800, 1000);
-		skillNr2 = new SkillView (paths.getPath("skillStrongAttack"), paths.getPath("skillHightlight"),
+		skillNr2 = new SkillSprite (paths.getPath("skillStrongAttack"), paths.getPath("skillHightlight"),
 				root, 1000, 1000);
-		skillNr3 = new SkillView (paths.getPath("skillHeal"), paths.getPath("skillHightlight"),
+		skillNr3 = new SkillSprite (paths.getPath("skillHeal"), paths.getPath("skillHightlight"),
 				root, 1200, 1000);
 		
 		hp = new HpController (hook, paths.getPath("hpStripe"), paths.getPath("pieceOfHp"), 50, 295, 65, 10);
@@ -104,52 +111,3 @@ class UIController {
 	}
 }
 
-class HpController{
-	private View hp[], stripeView;
-	private Group hpGroup;
-	private int currentHp;
-	private int maxHp;
-	
-	public HpController (Group hook, String stripePath, String hpPath, int numberOfPieces,
-			double xposition, double yposition, double interval) {
-		hpGroup = new Group();
-		hook.getChildren().add(hpGroup);
-		currentHp = numberOfPieces - 1;
-		maxHp = numberOfPieces;
-		
-		stripeView = new View (stripePath, hpGroup, xposition, yposition);
-		double startPoint = (numberOfPieces/2)*interval - interval/2;
-		
-		hp = new View[50];
-		int tmpCounter = 0;
-
-		for (int i = 0; i < maxHp; i++) {
-			hp[i] = new View(hpPath, hpGroup, xposition - startPoint + tmpCounter, yposition - 5);
-			tmpCounter += interval;
-		}
-		
-	}
-
-	public void changeHp(int newHp) {
-		if (newHp > maxHp)
-			return;
-		if (newHp != 0)
-			newHp -= 1;
-		if (newHp == currentHp)
-			return;
-		if (newHp > currentHp)
-			for (int i = currentHp; i <= newHp; i++)
-				hp[i].setVisible(true);
-		else
-			for (int i = currentHp; i >= newHp; i--)
-				hp[i].setVisible(false);
-		currentHp = newHp;
-	}
-	
-	public void setVisible(boolean onOrOff){
-		stripeView.setVisible(onOrOff);
-		for (int i = 0; i < maxHp; i++) {
-			hp[i].setVisible(onOrOff);
-		}
-	}
-}

@@ -5,7 +5,20 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class View {
+/**
+ * Provides displaying images on screen.
+ * Uses JavaFX, especially classes Image and ImageView
+ *
+ * @param  graphicPath the location of the image on local disk
+ * @param  hook the node, which is the parent of image
+ * @param  xposition position the image on the screen, distance from left edge of window
+ * @param  yposition position the image on the screen, distance from top edge of window
+ * @param  xsize optional parameter, it it uses in interactions detecting
+ * @param  ysize optional parameter, it it uses in interactions detecting
+ */
+
+
+public class Sprite {
 	protected Image image;
 	protected ImageView imageView;
 	protected Group hook;
@@ -13,9 +26,9 @@ public class View {
 	protected double Yposition;
 	private double Xsize;
 	private double Ysize;
-	private boolean isVisible;
+	protected boolean isVisible;
 
-	public View(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
+	public Sprite(String graphicPath, Group hook, double xposition, double yposition, double xsize, double ysize) {
 		this.hook = hook;
 		Xposition = xposition; //mid
 		Yposition = yposition; //bottom
@@ -28,7 +41,7 @@ public class View {
 		isVisible = false;
 	}
 	
-	public View(String graphicPath, Group hook, double xposition, double yposition) {
+	public Sprite(String graphicPath, Group hook, double xposition, double yposition) {
 		this.hook = hook;
 		Xposition = xposition;
 		Yposition = yposition;
@@ -60,7 +73,7 @@ public class View {
 		return new Rectangle2D(hook.getLayoutX() + Xposition - Xsize/2, hook.getLayoutY() + Yposition - Ysize, Xsize, Ysize);
 	}
 		
-	public boolean intersects (View example){
+	public boolean intersects (Sprite example){
 		return example.getBoundary().intersects( this.getBoundary() );
 	}
 	
@@ -77,6 +90,10 @@ public class View {
 	
 	public double getYposition() {
 		return hook.getLayoutY() + Yposition;// - Ysize;
+	}
+	
+	public boolean getIsVisible() {
+		return isVisible;
 	}
 }
 

@@ -4,7 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class FourPerspectiveView extends View{
+public class FourPerspectiveSprite extends Sprite{
 	private Image imageFront;
 	private Image imageLeft;
 	private Image imageBack;
@@ -15,22 +15,10 @@ public class FourPerspectiveView extends View{
 	} 
 	perspective viewDirection;
 	
-	public FourPerspectiveView(String graphicPathFloor, String graphicPathFront, String graphicPathRight, String graphicPathLeft, String graphicPathBack,
-			Group hook, double xposition, double yposition, double xsize, double ysize) {
-		
-		super (graphicPathFloor, hook, xposition, yposition, xsize, ysize);
-		imageLeft = new Image(graphicPathLeft);
-		imageFront = new Image(graphicPathFront);
-		imageBack = new Image(graphicPathBack);
-		imageRight = new Image(graphicPathRight);
-		perspectiveView = new ImageView(imageLeft);
-		perspectiveView.relocate(xposition - (perspectiveView.getBoundsInLocal().getWidth()/2),
-				yposition - (perspectiveView.getBoundsInLocal().getHeight()));
-		viewDirection = perspective.LEFT;
-	}
-	
-	public FourPerspectiveView(String graphicPathFloor, String graphicPathFront,String graphicPathRight, String graphicPathLeft, String graphicPathBack,
+	public FourPerspectiveSprite(String graphicPathFloor, String graphicPathFront,
+			String graphicPathRight, String graphicPathLeft, String graphicPathBack,
 			Group hook, double xposition, double yposition) {
+		
 		super (graphicPathFloor, hook, xposition, yposition);
 		imageLeft = new Image(graphicPathLeft);
 		imageFront = new Image(graphicPathFront);
@@ -42,21 +30,7 @@ public class FourPerspectiveView extends View{
 		viewDirection = perspective.LEFT;
 	}
 	
-	public void changeImageOnLeft () {
-		imageView.setImage(imageLeft);
-	}
-	
-	public void changeImageOnBack () {
-		imageView.setImage(imageBack);
-	}
-	
-	public void changeImageOnRight () {
-		imageView.setImage(imageRight);
-	}
-	
 	public void updateView(double dx, double dy) {
-		
-		
 		if (dy>0) {
 			if (viewDirection == perspective.FRONT)
 				return;
@@ -92,13 +66,23 @@ public class FourPerspectiveView extends View{
 	}
 	
 	public void setVisible(boolean onOrOff) {
+		/*
 		if (onOrOff) {
-			//hook.getChildren().add(imageView);
 			hook.getChildren().add(perspectiveView);
 		}
 		else {
-			//hook.getChildren().remove(imageView);
 			hook.getChildren().remove(perspectiveView);
+		}*/
+		if ((onOrOff && isVisible) || (!onOrOff && !isVisible))
+			return;
+		
+		if (onOrOff) {
+			hook.getChildren().add(perspectiveView);
+			isVisible = true;
+		}
+		else {
+			hook.getChildren().remove(perspectiveView);
+			isVisible = false;
 		}
 	}
 }

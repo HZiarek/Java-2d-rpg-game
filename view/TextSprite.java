@@ -6,14 +6,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class TextView {
+/**
+ * Sprite; provides displaying images on screen.
+ */
+
+public class TextSprite {
 	 private Text text;
 	 private Group hook;
 	 private double Xposition;
 	 private double Yposition;
 	 private boolean isVisible;
 	
-	public TextView(String content,  Group hook, double xposition, double yposition, int size, Color color) {
+	public TextSprite(String content,  Group hook, double xposition, double yposition, int size, Color color) {
 		this.hook = hook;
 		Xposition = xposition;
 		Yposition = yposition;
@@ -62,5 +66,8 @@ public class TextView {
 	public void setColor(Color newColor) {
 		text.setFill(newColor);
 	}
-
+	
+	public boolean getIsVisible() {
+		return isVisible;
+	}
 }

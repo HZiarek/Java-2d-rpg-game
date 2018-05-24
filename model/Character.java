@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * It extends Creature; adds amount of money, which character has.
+ */
+
 public class Character extends Creature {
 	private int money;
 	

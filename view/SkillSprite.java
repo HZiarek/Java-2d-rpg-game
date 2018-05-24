@@ -5,13 +5,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
-public class SkillView extends View{
+public class SkillSprite extends Sprite{
 	private Image highlightImage;
 	private ImageView highlightView;
 	boolean isHighlight;
 	
 	
-	public SkillView(String graphicPathSkill, String graphicPathHighlight, Group hook, double xposition, double yposition, double xsize, double ysize) {
+	public SkillSprite(String graphicPathSkill, String graphicPathHighlight, Group hook, double xposition, double yposition, double xsize, double ysize) {
 		super (graphicPathSkill, hook, xposition, yposition, xsize, ysize);
 		highlightImage = new Image(graphicPathHighlight);
 		highlightView = new ImageView(highlightImage);
@@ -20,7 +20,7 @@ public class SkillView extends View{
 		isHighlight = false;
 	}
 	
-	public SkillView(String graphicPathSkill, String graphicPathHighlight, Group hook, double xposition, double yposition) {
+	public SkillSprite(String graphicPathSkill, String graphicPathHighlight, Group hook, double xposition, double yposition) {
 		super (graphicPathSkill, hook, xposition, yposition);
 		highlightImage = new Image(graphicPathHighlight);
 		highlightView = new ImageView(highlightImage);
